@@ -609,7 +609,7 @@ window.collageAutoError=token=>{if(batchWaiter){const w=batchWaiter;batchWaiter=
 function renderOutSeg(){document.querySelectorAll('#outSeg button').forEach(b=>{const on=Number(b.dataset.outedge)===outEdge();b.classList.toggle('active',on);b.setAttribute('aria-checked',String(on))})}
 document.querySelectorAll('#outSeg button').forEach(b=>b.onclick=()=>{try{localStorage.setItem('nazo-collage-outedge',b.dataset.outedge)}catch(_){}renderOutSeg();toast(`保存サイズ：${b.textContent.replace(/\s+/g,' ').trim()}（長辺${b.dataset.outedge}px）で保存します`)});
 renderOutSeg();
-const _renderMagic=render;render=function(){_renderMagic();const has=S.slots.some(Boolean);const hf=document.querySelector('#hideFaces');if(hf)hf.disabled=!has||loading||batchRunning;if(has)hintOnce('nazo-hint-lp-v2','ヒント：ボタンの中には長押しで詳しい設定が開くものがあります（「顔を隠す」の設定、余白の「ぼかして重ねる」の調整など）')};
+const _renderMagic=render;render=function(){_renderMagic();const has=S.slots.some(Boolean);const ar=document.querySelector('.addRow');if(ar)ar.style.display=S.slots.includes(null)?'':'none';const hf=document.querySelector('#hideFaces');if(hf)hf.disabled=!has||loading||batchRunning;if(has)hintOnce('nazo-hint-lp-v2','ヒント：ボタンの中には長押しで詳しい設定が開くものがあります（「顔を隠す」の設定、余白の「ぼかして重ねる」の調整など）')};
 async function waitEditorReady(token,timeout=30000){const t0=Date.now();while(Date.now()-t0<timeout){if(!activeEdit||activeEdit.token!==token)return false;if(!$('#editFrame').hidden&&editorReady)return true;await new Promise(r=>setTimeout(r,120))}return false}
 async function hideFacesInSlot(i){
   const p=S.slots[i];if(!p)return 0;
