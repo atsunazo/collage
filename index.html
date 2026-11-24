@@ -21,20 +21,10 @@ button,input{font:inherit}button{min-width:40px;min-height:42px;padding:8px 10px
 
 html,body{touch-action:manipulation;-webkit-text-size-adjust:100%}
 
-.settings .layoutStrip #makeLayout{width:auto;padding:4px 10px;font-size:12px;flex-direction:column;gap:1px;line-height:1.2;border-style:dashed}
-.layoutStrip .mine{position:relative}.layoutStrip .mine::after{content:"★";position:absolute;top:1px;right:3px;font-size:9px;color:var(--ac)}
-.lmBox{position:relative;margin:4px auto 8px;background:#f6f0f3;border-radius:6px;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden;background-image:linear-gradient(#e9dde4 1px,transparent 1px),linear-gradient(90deg,#e9dde4 1px,transparent 1px)}
-.lmRect{position:absolute;box-sizing:border-box;border:2px solid #fff;background:#e6b9cbdd;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#5b2a42;font-weight:600}
-.lmRect.sel{background:#cf6b93e6;color:#fff;outline:2px solid #8f2f58;z-index:50}
-.lmRect .lmHandle{position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid #8f2f58;transform:translate(35%,35%);display:none}
-.lmRect.sel .lmHandle{display:block}
-.lmDraft{position:absolute;border:2px dashed #8f2f58;background:#cf6b9333;pointer-events:none}
-.lmBar{position:sticky;bottom:0;background:#fff;padding-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}.lmBar .grow{flex:1}.lmInfo{font-size:12px;color:#7b6470;margin:0 0 6px;line-height:1.5}.lmBar button:disabled{opacity:.4}
+.lmInfo{font-size:12px;color:#7b6470;margin:0 0 6px;line-height:1.5}
 #fitSeg .fr,#gapSeg .fr{fill:none;stroke:currentColor;stroke-width:1.6}#fitSeg .ph,#gapSeg .ph{fill:currentColor;opacity:.45;stroke:none}#fitSeg button.active .ph,#gapSeg button.active .ph{opacity:.9}
 #gapSeg .fr{stroke-width:1.2}
-.layoutStrip{position:relative}.layoutStrip button.lifting{transform-origin:center;z-index:5;box-shadow:0 8px 18px #5b2a4240;border-color:var(--ac);background:#fff;transition:none}
-.layoutStrip.reordering button:not(.lifting){transition:transform .15s}.layoutStrip.reordering{touch-action:none}
-.layoutStrip button.pressing{animation:lpPulse .45s ease-out}@keyframes lpPulse{0%{transform:scale(1)}100%{transform:scale(.92)}}
+.layoutStrip{position:relative}.layoutStrip button.pressing{animation:lpPulse .45s ease-out}@keyframes lpPulse{0%{transform:scale(1)}100%{transform:scale(.92)}}
 .commandBar .rightCommands{flex:1 1 auto;display:flex;gap:8px;justify-content:flex-end;min-width:0}
 .commandBar #share{flex:0 0 46px;width:46px;min-width:46px;min-height:42px;padding:6px}
 .commandBar .leftCommands{flex:0 0 auto;flex-wrap:nowrap}.commandBar #save{flex:1 1 0;max-width:126px;min-width:56px;min-height:42px;font-size:16px;padding:8px 10px}
@@ -69,9 +59,7 @@ img{-webkit-user-drag:none;user-drag:none}
 .countWheel .cwItem.on{color:#4a3843;font-size:20px!important;font-weight:400!important;transform:none}.countWheel .cwItem.on small{color:var(--ac);opacity:1}
 .countWheel .cwBand{position:absolute;left:10px;right:10px;top:63px;height:36px;border:1.5px solid #e6b9cb;border-radius:11px;background:#fff7fa!important;box-shadow:0 1px 4px #cf6b931a;pointer-events:none;z-index:0}
 .cwBackdrop{position:fixed;inset:0;z-index:119;background:transparent}
-.commandBar #shuffleBtn{flex:0 0 36px;width:36px;max-width:36px;min-width:0;min-height:42px;padding:6px;display:flex;align-items:center;justify-content:center}@media (max-width:374px){.commandBar #shuffleBtn{flex-basis:32px;width:32px;max-width:32px;padding:5px}}
-#shuffleBtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-@media (max-width:374px){.commandBar{gap:4px;padding-left:5px;padding-right:5px}.commandBar .leftCommands,.commandBar .rightCommands{gap:4px}.commandBar #add{padding:8px 5px;font-size:10.5px}.commandBar #undo,.commandBar #redo,.commandBar #discard,.commandBar #shuffleBtn{flex-basis:30px;width:30px;max-width:30px;padding:4px}.commandBar #share{flex-basis:40px;width:40px;min-width:40px}.commandBar #save{min-width:48px;flex:0 1 54px;padding:8px 4px}}
+@media (max-width:374px){.commandBar{gap:4px;padding-left:5px;padding-right:5px}.commandBar .leftCommands,.commandBar .rightCommands{gap:4px}.commandBar #add{padding:8px 5px;font-size:10.5px}.commandBar #undo,.commandBar #redo,.commandBar #discard{flex-basis:30px;width:30px;max-width:30px;padding:4px}.commandBar #share{flex-basis:40px;width:40px;min-width:40px}.commandBar #save{min-width:48px;flex:0 1 54px;padding:8px 4px}}
 #bgSeg .ph.mt{opacity:.85}
 #sheet:has(.adjustPreview){max-height:calc(100dvh - 76px - env(safe-area-inset-bottom));bottom:calc(max(8px,env(safe-area-inset-bottom)) + 52px)}
 .adjustPreview{height:clamp(120px,calc(100dvh - 430px),36dvh)}
@@ -108,7 +96,7 @@ img{-webkit-user-drag:none;user-drag:none}
 .settings .seg button{width:34px;min-height:44px}@media (max-width:374px){.settings .seg button{width:24px}.segLabel{padding:0 2px 0 4px}#bgSeg .swCustom{width:24px}}
 .fxRow small{font-size:10px;color:#9a7c8c;width:auto;white-space:nowrap}.fxRow span{width:64px}
 
-/* moko-fix: magic bar / output size / save info / touch targets */
+/* magic bar / output size / save info / touch targets */
 .addRow{display:flex;justify-content:center;padding:10px 0 4px}
 .addRow #add{min-height:46px;padding:10px 26px;font-size:14px;border-radius:999px}
 .commandBar #hideFaces{white-space:nowrap;position:relative}
@@ -118,14 +106,13 @@ img{-webkit-user-drag:none;user-drag:none}
 .commandBar button{min-height:44px}
 #lyBar #lyCancel{flex:.9}
 
-/* moko-fix: flat layout catalog, one scrollable row, larger thumbs */
+/* flat layout catalog, one scrollable row, larger thumbs */
 .layoutStrip{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;row-gap:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .layoutStrip::-webkit-scrollbar{display:none}
 .settings .layoutStrip button{width:54px;height:54px;min-height:54px;flex:0 0 auto}
 .settings .layoutStrip #autoLayout{width:auto;height:54px;min-height:54px;flex:0 0 auto}
-.settings .layoutStrip #makeLayout{width:auto;height:54px;min-height:54px;flex:0 0 auto}
 
-/* moko-fix: empty-cell label sits at the shape's centroid */
+/* empty-cell label sits at the shape's centroid */
 .cell .plus{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
 
 
@@ -250,13 +237,8 @@ const REST_COLS={1:1,2:2,3:3,4:2,5:3,6:3,7:4,8:4};
 function equalGrid(x,y,w,h,count,per,g,vertical){const out=[];if(!count)return out;const lines=Math.ceil(count/per);if(!vertical){const cw=(w-g*(per-1))/per,ch=(h-g*(lines-1))/lines;for(let r=0,k=0;r<lines;r++){const n=Math.min(per,count-k),off=(per-n)*(cw+g)/2;for(let c=0;c<n;c++,k++)out.push({x:x+off+c*(cw+g),y:y+r*(ch+g),w:cw,h:ch})}}else{const cw=(w-g*(lines-1))/lines,ch=(h-g*(per-1))/per;for(let c=0,k=0;c<lines;c++){const n=Math.min(per,count-k),off=(per-n)*(ch+g)/2;for(let r=0;r<n;r++,k++)out.push({x:x+c*(cw+g),y:y+off+r*(ch+g),w:cw,h:ch})}}return out}
 function layoutBoxes(L,W,H,g,n){if(!L.hero||n<3)return equalGrid(g,g,W-2*g,H-2*g,n,Math.max(1,Math.min(L.cols||2,n)),g,false);const r=n-1,per=REST_COLS[r]||Math.ceil(Math.sqrt(r)),lines=Math.ceil(r/per),f=lines===1?.62:lines===2?.52:.42;if(L.heroPos==='left'){const iw=W-2*g,hw=(iw-g)*f;return[{x:g,y:g,w:hw,h:H-2*g},...equalGrid(g+hw+g,g,iw-hw-g,H-2*g,r,per,g,true)]}const ih=H-2*g,hh=(ih-g)*f;return[{x:g,y:g,w:W-2*g,h:hh},...equalGrid(g,g+hh+g,W-2*g,ih-hh-g,r,per,g,false)]}
 function gridAllowed(n,c){if(c<1||c>5||c>n)return false;const rows=Math.ceil(n/c),last=n-(rows-1)*c;return rows<=5&&(last===c||last>=c/2)}
-function layoutTemplates(n){const t=[];for(let c=1;c<=4;c++)if(gridAllowed(n,c))t.push({key:'g'+c,hero:false,cols:c,label:c+'列で同じ大きさ'});if(n>=3){t.push({key:'ht',hero:true,heroPos:'top',label:'上に1枚を大きく'});t.push({key:'hl',hero:true,heroPos:'left',label:'左に1枚を大きく'})}return t}
-function currentKey(){return S.hero&&S.n>=3?(S.heroPos==='left'?'hl':'ht'):'g'+S.cols}
 function normalizeLayout(){if(S.n<3)S.hero=false;if(!S.heroPos)S.heroPos='top';if(!S.hero&&!gridAllowed(S.n,S.cols)){const ok=[1,2,3,4,5].filter(c=>gridAllowed(S.n,c));S.cols=ok.sort((a,b)=>Math.abs(a-S.cols)-Math.abs(b-S.cols))[0]||1}}
-cellBoxes=function(d){normalizeLayout();return layoutBoxes({hero:S.hero,heroPos:S.heroPos,cols:S.cols},d.W,d.H,d.gap,S.n)};
 const recommendBefore=recommendLayout;recommendLayout=function(){recommendBefore();normalizeLayout()};
-function thumbSVG(L){const r=boardRatio(),T=40,w=r>=1?T:T*r,h=r>=1?T/r:T;return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" aria-hidden="true">'+layoutBoxes(L,w,h,1.6,S.n).map((b,i)=>'<rect'+(L.hero&&i===0?' class="big"':'')+' x="'+b.x.toFixed(2)+'" y="'+b.y.toFixed(2)+'" width="'+b.w.toFixed(2)+'" height="'+b.h.toFixed(2)+'" rx="1.2"/>').join('')+'</svg>'}
-function chooseTemplate(t){S.auto=false;S.hero=t.hero;if(t.hero)S.heroPos=t.heroPos;else S.cols=t.cols;commit()}
 function renderLayoutControls(){}
 document.querySelectorAll('#shapeSeg [data-shape]').forEach(b=>b.onclick=()=>{if(S.shape===b.dataset.shape)return;S.shape=b.dataset.shape;if(S.auto!==false)recommendLayout();commit()});
 const renderBeforeStrip=render;render=function(){normalizeLayout();renderBeforeStrip();renderLayoutControls()};
@@ -266,37 +248,9 @@ document.addEventListener('touchend',e=>{if(e.touches.length||e.changedTouches.l
 document.addEventListener('dblclick',e=>{if(!skip(e.target)&&e.cancelable)e.preventDefault()},{passive:false});
 for(const name of ['gesturestart','gesturechange','gestureend'])document.addEventListener(name,e=>{if(e.cancelable)e.preventDefault()},{passive:false})})();
 
-const LM_UNITS=24,LM_KEY='nazo-collage-layouts';
+const LM_KEY='nazo-collage-layouts';
 function loadMine(){try{const a=JSON.parse(localStorage.getItem(LM_KEY)||'[]');return Array.isArray(a)?a.filter(t=>t&&Array.isArray(t.rects)&&t.rects.length>=2&&t.rects.length<=15):[]}catch{return[]}}
 function saveMine(a){try{localStorage.setItem(LM_KEY,JSON.stringify(a.slice(-20)))}catch{toast('保存できませんでした')}}
-function rectsToBoxes(rects,W,H,g){const A={x:g,y:g,w:W-2*g,h:H-2*g};return rects.map(([x,y,w,h])=>{let x0=A.x+x*A.w,x1=A.x+(x+w)*A.w,y0=A.y+y*A.h,y1=A.y+(y+h)*A.h;if(x>0.001)x0+=g/2;if(x+w<0.999)x1-=g/2;if(y>0.001)y0+=g/2;if(y+h<0.999)y1-=g/2;return{x:x0,y:y0,w:Math.max(1,x1-x0),h:Math.max(1,y1-y0)}})}
-function centerBoxes(W,H,g,n){const r=n-1,L=Math.ceil(r/2),R=r-L,iw=W-2*g,sides=R?2:1,sw=(iw*.5-g*sides)/sides,cw=iw-sides*(sw+g);const left=equalGrid(g,g,sw,H-2*g,L,L,g,true),hero={x:g+sw+g,y:g,w:cw,h:H-2*g},right=R?equalGrid(g+sw+g+cw+g,g,sw,H-2*g,R,R,g,true):[];return[hero,...left,...right]}
-function staggerBoxes(W,H,g,n){const cols=n<=5?2:n<=10?3:4,counts=Array.from({length:cols},(_,i)=>Math.floor(n/cols)+(i<n%cols?1:0)),cw=(W-g*(cols+1))/cols,out=[];counts.forEach((k,c)=>{let w=Array(k).fill(1);if(c%2===1&&k>=2){w[0]=.6;w[k-1]=1.4}if(c%2===0&&k>=2&&counts.every(v=>v===k)&&cols===3&&c===2){w[0]=1.3;w[k-1]=.7}const sum=w.reduce((a,b)=>a+b,0),ih=H-g*(k+1);let y=g;w.forEach(v=>{const h=ih*v/sum;out.push({x:g+c*(cw+g),y,w:cw,h});y+=h+g})});return out}
-const layoutBoxesBase=layoutBoxes;
-layoutBoxes=function(L,W,H,g,n){if(L.tpl==='hc'&&n>=3)return centerBoxes(W,H,g,n);if(L.tpl==='st'&&n>=4)return staggerBoxes(W,H,g,n);if(L.rects&&L.rects.length===n)return rectsToBoxes(L.rects,W,H,g);return layoutBoxesBase(L,W,H,g,n)};
-function findMine(id){return loadMine().find(t=>t.id===id)}
-function currentL(){const L={hero:S.hero,heroPos:S.heroPos,cols:S.cols,tpl:S.tpl||null};if(S.tpl&&S.tpl.startsWith('m:')){const t=findMine(S.tpl.slice(2));if(t)L.rects=t.rects}return L}
-const normalizeBefore=normalizeLayout;normalizeLayout=function(){if(S.tpl){const ok=S.tpl==='hc'?S.n>=3:S.tpl==='st'?S.n>=4:(()=>{const t=findMine(S.tpl.slice(2));return !!t&&t.rects.length===S.n})();if(!ok)S.tpl=null}normalizeBefore()};
-cellBoxes=function(d){normalizeLayout();return layoutBoxes(currentL(),d.W,d.H,d.gap,S.n)};
-const templatesBefore=layoutTemplates;layoutTemplates=function(n){const t=templatesBefore(n);if(n>=3)t.push({key:'hc',tpl:'hc',hero:true,label:'中央に1枚を大きく'});if(n>=4)t.push({key:'st',tpl:'st',hero:false,label:'ずらして並べる'});loadMine().filter(m=>m.rects.length===n).forEach(m=>t.push({key:'m:'+m.id,tpl:'m:'+m.id,rects:m.rects,mine:true,hero:false,label:'マイ並べ方'}));return t};
-currentKey=function(){if(S.tpl)return S.tpl;return S.hero&&S.n>=3?(S.heroPos==='left'?'hl':'ht'):'g'+S.cols};
-const chooseBefore=chooseTemplate;chooseTemplate=function(t){if(t.tpl){if(t.mine&&S.tpl===t.tpl&&S.auto===false){mineMenu(t);return}S.auto=false;S.hero=false;S.tpl=t.tpl;commit();return}S.tpl=null;chooseBefore(t)};
-const recommendBefore2=recommendLayout;recommendLayout=function(){if(S.auto!==false)S.tpl=null;recommendBefore2()};
-function mineMenu(t){const d=document.createElement('div');d.className='sheetActions';[['この並べ方を編集',()=>openMaker(t.tpl.slice(2))],['この並べ方を削除',()=>{if(!confirm('このマイ並べ方を削除しますか？'))return;saveMine(loadMine().filter(m=>'m:'+m.id!==t.tpl));S.tpl=null;commit();close()}]].forEach(([l,f])=>{const b=document.createElement('button');b.textContent=l;b.onclick=f;d.append(b)});sheet('マイ並べ方',d)}
-const thumbBefore=thumbSVG;thumbSVG=function(L){if(L.tpl&&!L.rects&&L.tpl.startsWith('m:')){const m=findMine(L.tpl.slice(2));if(m)L={...L,rects:m.rects}}return thumbBefore(L)};
-function openMaker(editId){const units=LM_UNITS,snap=v=>Math.round(v*units)/units;let rects;const ed=editId?findMine(editId):null;if(ed)rects=ed.rects.map(r=>r.slice());else rects=layoutBoxes(currentL(),1,1,0,S.n).map(b=>[snap(b.x),snap(b.y),Math.max(1/units,snap(b.w)),Math.max(1/units,snap(b.h))]);let sel=-1;const hist=[];
-const d=document.createElement('div');const info=document.createElement('p');info.className='lmInfo';info.textContent='何もないところをなぞると枠を追加。枠はドラッグで移動、選んだ枠の右下の●で大きさを変更。番号の順に写真が入ります（2〜9枠）。';const box=document.createElement('div');box.className='lmBox';const r=boardRatio();box.style.aspectRatio=String(r);box.style.width=`min(100%, calc(34dvh * ${r}))`;const g=100/units;box.style.backgroundSize=`${g}% ${g}%`;
-const bar=document.createElement('div');bar.className='lmBar';const mk=(t,f,cls)=>{const b=document.createElement('button');b.textContent=t;b.onclick=f;if(cls)b.className=cls;bar.append(b);return b};
-const bUndo=mk('元に戻す',()=>{if(!hist.length)return;rects=hist.pop();sel=-1;draw()});const bDel=mk('選んだ枠を削除',()=>{if(sel<0)return;push();rects.splice(sel,1);sel=-1;draw()});const bFront=mk('一番前へ',()=>{if(sel<0)return;push();const [x]=rects.splice(sel,1);rects.push(x);sel=rects.length-1;draw()});const sp=document.createElement('span');sp.className='grow';bar.append(sp);const bSave=mk('保存して使う',save,'primary');
-d.append(info,box,bar);
-function push(){hist.push(rects.map(x=>x.slice()));if(hist.length>30)hist.shift()}
-function draw(){box.replaceChildren();rects.forEach((q,i)=>{const el=document.createElement('div');el.className='lmRect'+(i===sel?' sel':'');Object.assign(el.style,{left:q[0]*100+'%',top:q[1]*100+'%',width:q[2]*100+'%',height:q[3]*100+'%',zIndex:String(i+1)});el.dataset.i=i;el.textContent=i+1;const h=document.createElement('span');h.className='lmHandle';el.append(h);box.append(el)});bUndo.disabled=!hist.length;bDel.disabled=sel<0;bFront.disabled=sel<0;bSave.disabled=rects.length<2||rects.length>9;bSave.textContent=rects.length>9?'9枠までです':rects.length<2?'2枠以上必要です':`保存して使う（${rects.length}枚）`}
-let drag=null;const pt=e=>{const b=box.getBoundingClientRect();return{x:Math.max(0,Math.min(1,(e.clientX-b.left)/b.width)),y:Math.max(0,Math.min(1,(e.clientY-b.top)/b.height))}};
-box.addEventListener('pointerdown',e=>{e.preventDefault();box.setPointerCapture(e.pointerId);const p=pt(e),handle=e.target.closest('.lmHandle'),re=e.target.closest('.lmRect');if(re){const i=+re.dataset.i;sel=i;push();drag={mode:handle?'size':'move',i,p0:p,r0:rects[i].slice(),moved:false};draw();return}sel=-1;drag={mode:'new',p0:p,el:null};draw()});
-box.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e),dx=p.x-drag.p0.x,dy=p.y-drag.p0.y,m=1/units;if(drag.mode==='move'){const q=drag.r0;rects[drag.i]=[Math.max(0,Math.min(1-q[2],snap(q[0]+dx))),Math.max(0,Math.min(1-q[3],snap(q[1]+dy))),q[2],q[3]];drag.moved=true;draw()}else if(drag.mode==='size'){const q=drag.r0;rects[drag.i]=[q[0],q[1],Math.max(2*m,Math.min(1-q[0],snap(q[2]+dx))),Math.max(2*m,Math.min(1-q[1],snap(q[3]+dy)))];drag.moved=true;draw()}else{const x0=snap(Math.min(drag.p0.x,p.x)),y0=snap(Math.min(drag.p0.y,p.y)),x1=snap(Math.max(drag.p0.x,p.x)),y1=snap(Math.max(drag.p0.y,p.y));drag.r=[x0,y0,x1-x0,y1-y0];if(!drag.el){drag.el=document.createElement('div');drag.el.className='lmDraft';box.append(drag.el)}Object.assign(drag.el.style,{left:x0*100+'%',top:y0*100+'%',width:(x1-x0)*100+'%',height:(y1-y0)*100+'%'})}});
-const end=()=>{if(!drag)return;if(drag.mode==='new'){const q=drag.r;if(q&&q[2]>=2/units&&q[3]>=2/units){if(rects.length>=9)toast('枠は9つまでです');else{push();rects.push(q);sel=rects.length-1}}}else if(!drag.moved)hist.pop();drag=null;draw()};box.addEventListener('pointerup',end);box.addEventListener('pointercancel',end);
-function save(){if(rects.length<2||rects.length>9)return;const a=loadMine();let id=editId;if(id){const t=a.find(m=>m.id===id);if(t)t.rects=rects}else{id=Date.now().toString(36);a.push({id,rects})}saveMine(a);S.auto=false;S.hero=false;S.tpl='m:'+id;$('#layoutStrip').dataset.sig='';if(rects.length!==S.n)setCount(rects.length);else commit();close();toast('マイ並べ方に保存しました')}
-draw();sheet(editId?'マイ並べ方を編集':'並べ方を自分で作る',d)}
 
 function applyFitAll(v){S.slots.forEach(p=>{if(p){p.fit=v;p.zoom=1;p.x=50;p.y=50}});(S.parked||[]).forEach(p=>{if(p)p.fit=v});DEFAULT_FIT=v;try{localStorage.setItem('nazo-collage-fit',v)}catch{}commit();toast(v==='cover'?'写真：枠いっぱい（端が少し切れます）':'写真：全体を表示')}
 function renderFitSeg(){const ps=S.slots.filter(Boolean),cur=!ps.length?DEFAULT_FIT:ps.every(p=>p.fit==='cover')?'cover':ps.every(p=>p.fit==='contain')?'contain':null;document.querySelectorAll('#fitSeg [data-fit]').forEach(b=>{const on=b.dataset.fit===cur;b.classList.toggle('active',on);b.setAttribute('aria-checked',String(on));b.disabled=loading});const seg=$('#fitSeg');if(seg)seg.title=cur?'':'写真ごとに見せ方が違います'}
@@ -304,36 +258,9 @@ document.querySelectorAll('#fitSeg [data-fit]').forEach(b=>b.onclick=()=>{const 
 
 const BG_PRESETS=['#ffffff','#18151b','#fff0f6'];
 function renderGapBg(){document.querySelectorAll('#gapSeg [data-gap]').forEach(b=>{const on=+b.dataset.gap===S.gap;b.classList.toggle('active',on);b.setAttribute('aria-checked',String(on));b.disabled=loading});const bg=(S.bg||'').toLowerCase();document.querySelectorAll('#bgSeg [data-bg]').forEach(b=>{const on=b.dataset.bg===bg;b.classList.toggle('active',on);b.setAttribute('aria-checked',String(on));b.disabled=loading});const custom=!BG_PRESETS.includes(bg),lab=document.querySelector('#bgSeg .swCustom'),inp=$('#bgCustom');if(lab){lab.classList.toggle('active',custom);lab.querySelector('.sw').style.background=custom?bg:''}if(inp){inp.disabled=loading;if(custom&&inp.value!==bg)inp.value=bg}}
-document.querySelectorAll('#gapSeg [data-gap]').forEach(b=>b.onclick=()=>{const v=+b.dataset.gap;if(S.gap===v)return;S.gap=v;commit()});
 document.querySelectorAll('#bgSeg [data-bg]').forEach(b=>b.onclick=()=>{const v=b.dataset.bg;if(S.bg===v)return;S.bg=v;commit()});
 (()=>{const inp=$('#bgCustom');if(!inp)return;inp.addEventListener('input',()=>{S.bg=inp.value;render()});inp.addEventListener('change',()=>{S.bg=inp.value;commit()})})();
 
-const ORDER_KEY='nazo-collage-layout-order';
-function loadOrder(){try{const a=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]');return Array.isArray(a)?a:[]}catch{return[]}}
-function saveOrder(a){try{localStorage.setItem(ORDER_KEY,JSON.stringify(a))}catch{}}
-function sortedTemplates(n){const list=layoutTemplates(n),order=loadOrder(),mineIds=loadMine().map(m=>'m:'+m.id);const rank=t=>{const i=order.indexOf(t.key);if(i>=0)return i;if(t.mine)return -1000+mineIds.indexOf(t.key)*-1;return 1000+list.indexOf(t)};return list.slice().sort((a,b)=>rank(a)-rank(b))}
-const saveMineBefore=saveMine;saveMine=function(a){const before=new Set(loadMine().map(m=>m.id));saveMineBefore(a);const added=a.filter(m=>!before.has(m.id)).map(m=>'m:'+m.id);const keep=new Set(a.map(m=>'m:'+m.id));let o=loadOrder().filter(k=>!k.startsWith('m:')||keep.has(k));if(added.length)o=[...added,...o];saveOrder(o)};
-let stripDrag=null,stripSuppressClick=0;
-renderLayoutControls=function(){document.querySelectorAll('#shapeSeg [data-shape]').forEach(b=>{const on=b.dataset.shape===S.shape;b.classList.toggle('active',on);b.setAttribute('aria-checked',String(on));b.disabled=loading});const strip=$('#layoutStrip');if(!strip||stripDrag)return;const key=currentKey(),auto=S.auto!==false,tpls=sortedTemplates(S.n),sig=[S.n,S.shape,key,auto,loading,tpls.map(t=>t.key).join(','),JSON.stringify(loadMine())].join('|');if(strip.dataset.sig===sig)return;strip.dataset.sig=sig;strip.replaceChildren();
-const a=document.createElement('button');a.id='autoLayout';a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>おまかせ';a.title='写真の向きに合わせて自動で並べます';a.setAttribute('role','radio');a.setAttribute('aria-checked',String(auto));a.classList.toggle('active',auto);a.disabled=loading;a.onclick=()=>{S.auto=true;S.hero=false;recommendLayout();commit()};const sep=document.createElement('span');sep.className='stripSep';strip.append(a,sep);
-for(const t of tpls){const b=document.createElement('button');b.dataset.key=t.key;b.innerHTML=thumbSVG(t);b.title=t.label+'（長押しで並べ替え）';b.setAttribute('aria-label',t.label);b.setAttribute('role','radio');const on=!auto&&t.key===key;b.setAttribute('aria-checked',String(on));b.classList.toggle('active',on);if(t.mine)b.classList.add('mine');if(auto&&t.key===key)b.style.borderStyle='dashed';b.disabled=loading;b.onclick=e=>{if(Date.now()<stripSuppressClick){e.preventDefault();return}chooseTemplate(t)};strip.append(b)}
-const sep2=document.createElement('span');sep2.className='stripSep';const mk=document.createElement('button');mk.id='makeLayout';mk.innerHTML='<b>＋</b>自分で作る';mk.title='枠を自由に配置して並べ方を作ります';mk.disabled=loading;mk.onclick=()=>openMaker(null);strip.append(sep2,mk);
-const act=strip.querySelector('.active:not(#autoLayout)')||strip.querySelector('[data-key][style*="dashed"]');if(act)act.scrollIntoView({block:'nearest',inline:'nearest'})};
-(()=>{const strip=$('#layoutStrip');if(!strip)return;let timer=null,start=null,raf=0;
-const items=()=>[...strip.querySelectorAll('button[data-key]')];
-function begin(btn,x){clearSel();stripDrag={btn,x0:x,last:x};strip.classList.add('reordering');btn.classList.remove('pressing');btn.classList.add('lifting');btn.style.transform='scale(1.08)';try{navigator.vibrate&&navigator.vibrate(12)}catch{}}
-function move(x){const d=stripDrag;if(!d)return;d.last=x;const r=strip.getBoundingClientRect();cancelAnimationFrame(raf);const edge=36;if(x<r.left+edge||x>r.right-edge){const step=()=>{if(!stripDrag)return;strip.scrollLeft+=x<r.left+edge?-6:6;place(stripDrag.last);raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)}place(x)}
-function place(x){const d=stripDrag,btn=d.btn,list=items();for(const o of list){if(o===btn)continue;const b=o.getBoundingClientRect(),c=b.left+b.width/2;const idxO=list.indexOf(o),idxM=list.indexOf(btn);if(idxO>idxM&&x>c){o.after(btn);break}if(idxO<idxM&&x<c){o.before(btn);break}}const me=btn.getBoundingClientRect(),natural=me.left-(new DOMMatrix(getComputedStyle(btn).transform).m41||0);btn.style.transform=`translateX(${x-(natural+me.width/2)}px) scale(1.08)`}
-function finish(){const d=stripDrag;cancelAnimationFrame(raf);if(!d)return;d.btn.classList.remove('lifting');d.btn.style.transform='';strip.classList.remove('reordering');const shown=items().map(b=>b.dataset.key),old=loadOrder();const rest=old.filter(k=>!shown.includes(k));const all=sortedTemplates(S.n).map(t=>t.key);saveOrder([...shown,...rest.filter(k=>!all.includes(k))]);stripDrag=null;stripSuppressClick=Date.now()+400;strip.dataset.sig='';renderLayoutControls();clearSel();toast('並び順を保存しました')}
-function cancelPress(){clearTimeout(timer);timer=null;if(start&&start.btn)start.btn.classList.remove('pressing');start=null}
-strip.addEventListener('touchstart',e=>{if(e.touches.length!==1)return cancelPress();const btn=e.target.closest('button[data-key]');if(!btn||btn.disabled)return;const t=e.touches[0];start={btn,x:t.clientX,y:t.clientY};btn.classList.add('pressing');timer=setTimeout(()=>{if(start){begin(start.btn,start.x);start=null}},450)},{passive:true});
-strip.addEventListener('touchmove',e=>{const t=e.touches[0];if(stripDrag){e.preventDefault();move(t.clientX);return}if(start&&Math.hypot(t.clientX-start.x,t.clientY-start.y)>8)cancelPress()},{passive:false});
-strip.addEventListener('touchend',e=>{if(stripDrag){e.preventDefault();finish()}cancelPress()},{passive:false});
-strip.addEventListener('touchcancel',()=>{if(stripDrag)finish();cancelPress()});
-strip.addEventListener('mousedown',e=>{if(e.button!==0)return;const btn=e.target.closest('button[data-key]');if(!btn||btn.disabled)return;start={btn,x:e.clientX,y:e.clientY};btn.classList.add('pressing');timer=setTimeout(()=>{if(start){begin(start.btn,start.x);start=null}},450)});
-window.addEventListener('mousemove',e=>{if(stripDrag){e.preventDefault();move(e.clientX)}else if(start&&Math.hypot(e.clientX-start.x,e.clientY-start.y)>8)cancelPress()});
-window.addEventListener('mouseup',()=>{if(stripDrag)finish();cancelPress()});
-})();
 
 function clearSel(){try{const s=window.getSelection&&window.getSelection();if(s&&s.rangeCount)s.removeAllRanges()}catch{}}
 const isEditable=el=>!!(el&&el.closest&&el.closest('input,textarea,[contenteditable="true"]'));
@@ -364,23 +291,10 @@ function done(){clearTimeout(t);const c=cur();if(c!==S.n)setCount(c);document.re
 const esc=e=>{if(e.key==='Escape')done()};bd.addEventListener('pointerdown',e=>{e.preventDefault();done()});document.addEventListener('keydown',esc)}
 $('#countValue').onclick=openCountWheel;
 
-function shuffleSlots(){const idx=S.slots.map((p,i)=>p?i:-1).filter(i=>i>=0);if(idx.length<2){toast('写真が2枚以上あると入れ替えられます');return}const ps=idx.map(i=>S.slots[i]);let order;for(let k=0;k<8;k++){order=ps.slice();for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]]}if(order.some((p,i)=>p!==ps[i]))break}idx.forEach((slot,k)=>S.slots[slot]=order[k]);selected=-1;swapFrom=-1;commit()}
 
 const renderBeforeV8=render;render=function(){renderBeforeV8();renderBgPhoto();const cv=$('#countValue');if(cv)cv.disabled=loading};render();
 
 // ===== 形の計算の部品・ぼかし重ね・角丸 =====
-const C4=[[0,0,'c'],[1,0,'c'],[1,1,'c'],[0,1,'c']];
-function T(label,extra,cells,big=-1){return{label,pts:[...C4,...extra],cells,big}}
-function chevron(n){const a=Math.min(.09,.3/n),ex=[],cells=[];for(let j=1;j<n;j++){const y=j/n;ex.push([0,y-a,'l'],[.5,y+a,'i'],[1,y-a,'r'])}const L=j=>4+(j-1)*3;for(let j=0;j<n;j++){const top=j===0?[0,1]:[L(j),L(j)+1,L(j)+2],bot=j===n-1?[2,3]:[L(j+1)+2,L(j+1)+1,L(j+1)];cells.push([...top,...bot])}return T('山型',ex,cells)}
-function triStrip(n){if(n===3)return T('三角',[[.5,0,'t']],[[0,4,3],[4,2,3],[4,1,2]],1);const m=(n-1)/2,ex=[],add=(x,y,t)=>{ex.push([x,y,t]);return 3+ex.length},Tt=[0],B=[3];for(let k=1;k<m;k++)Tt.push(add(k/m,0,'t'));Tt.push(1);for(let k=1;k<=m;k++)B.push(add((2*k-1)/(2*m),1,'b'));B.push(2);const cells=[[0,B[1],3]];for(let k=1;k<=m;k++){cells.push([Tt[k-1],Tt[k],B[k]]);if(k<m)cells.push([Tt[k],B[k+1],B[k]])}cells.push([1,2,B[m]]);return T('三角',ex,cells,n===5?2:-1)}
-const POLY={
- dia:{ok:n=>n===5,make:()=>T('ひし形',[[.5,0,'t'],[1,.5,'r'],[.5,1,'b'],[0,.5,'l']],[[4,5,6,7],[0,4,7],[4,1,5],[5,2,6],[7,6,3]],0)},
- x:{ok:n=>n===4,make:()=>T('バツ',[[.5,.5,'i']],[[0,1,4],[1,2,4],[2,3,4],[3,0,4]])},
- dia9:{ok:n=>n===9,make:()=>{const q=.25,h=.5,t=.75;return T('ひし形タイル',[[q,0,'t'],[t,0,'t'],[1,q,'r'],[1,t,'r'],[t,1,'b'],[q,1,'b'],[0,t,'l'],[0,q,'l'],[h,q,'i'],[t,h,'i'],[h,t,'i'],[q,h,'i']],[[12,13,14,15],[4,5,12],[6,7,13],[8,9,14],[10,11,15],[0,4,12,15,11],[5,1,6,13,12],[7,2,8,14,13],[9,3,10,15,14]],0)}},
- tri:{ok:n=>n===3||n===5||n===7,make:triStrip},
- zig:{ok:n=>n===2,make:()=>T('いなずま',[[.58,0,'t'],[.40,.44,'i'],[.62,.56,'i'],[.42,1,'b']],[[0,4,5,6,7,3],[4,1,2,7,6,5]])},
- chev:{ok:n=>n>=3&&n<=8,make:chevron}};
-function polyCells(t,n){const L=POLY[t].make(n);return L.cells.map((c,ci)=>({pts:c.map(i=>[L.pts[i][0],L.pts[i][1]]),big:ci===L.big}))}
 const LN=(p,q)=>({p,q});
 function isect(A,B){const [x1,y1]=A.p,[x2,y2]=A.q,[x3,y3]=B.p,[x4,y4]=B.q,d=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);if(Math.abs(d)<1e-9)return[(x2+x3)/2,(y2+y3)/2];const t=((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4))/d;return[x1+t*(x2-x1),y1+t*(y2-y1)]}
 function offsetPoly(pts,d){const n=pts.length;let a=0;for(let i=0;i<n;i++){const [x1,y1]=pts[i],[x2,y2]=pts[(i+1)%n];a+=x1*y2-x2*y1}const s=a>0?1:-1,lines=pts.map((p,i)=>{const q=pts[(i+1)%n],dx=q[0]-p[0],dy=q[1]-p[1],L=Math.hypot(dx,dy)||1,nx=-dy/L*s,ny=dx/L*s;return LN([p[0]+nx*d[i],p[1]+ny*d[i]],[q[0]+nx*d[i],q[1]+ny*d[i]])});return pts.map((_,i)=>isect(lines[(i-1+n)%n],lines[i]))}
@@ -420,19 +334,16 @@ const rectPts=b=>({pts:[[b.x,b.y],[b.x+b.w,b.y],[b.x+b.w,b.y+b.h],[b.x,b.y+b.h]]
 const P_=a=>({pts:a});
 function bestCols(n){let best=1,sc=Infinity;for(let c=1;c<=5;c++){if(!gridAllowed(n,c))continue;const v=Math.abs(Math.log(boardRatio()*Math.ceil(n/c)/c));if(v<sc){sc=v;best=c}}return best}
 const gridBoxes=(n,c)=>layoutBoxes({hero:false,cols:c},1,1,0,n);
-const toBox=c=>({x:c.pts[0][0],y:c.pts[0][1],w:c.pts[2][0]-c.pts[0][0],h:c.pts[2][1]-c.pts[0][1]});
+
 function tiltCells(boxes,d){const t=buildTree(boxes);if(!t)return boxes.map(rectPts);walkNodes(t,(n,i)=>{const s=i%2?-1:1;n.a=Math.max(.06,Math.min(.94,n.a+d*s));n.b=Math.max(.06,Math.min(.94,n.b-d*s))});return treeQuads(t).map(c=>({pts:c.pts}))}
 const withBig=(cells,i=0)=>cells.map((c,k)=>({...c,big:k===i}));
 // ---- 各系統のデザイン（タップするたびに順に切り替わる）
 function heroCells(n,f,per){const r=n-1,rows=Math.ceil(r/per),rh=(1-f)/rows,out=[{pts:[[0,0],[1,0],[1,f],[0,f]],big:true}];for(let j=0,k=0;j<rows;j++){const m=Math.min(per,r-k);for(let i=0;i<m;i++,k++)out.push(rectPts({x:i/m,y:f+j*rh,w:1/m,h:rh}))}return out}
-function heroVars(n){const r=n-1,v=[];if(r<=4)v.push(heroCells(n,.62,r));v.push(heroCells(n,.5,Math.ceil(r/2)));if(r>=7)v.push(heroCells(n,.42,Math.ceil(r/3)));v.push(heroCells(n,.7,r<=4?r:Math.ceil(r/2)));return v}
 function centerCols(n,s){const r=n-1,L=Math.ceil(r/2),R=r-L,out=[{pts:R?[[s,0],[1-s,0],[1-s,1],[s,1]]:[[s,0],[1,0],[1,1],[s,1]],big:true}];for(let i=0;i<L;i++)out.push(rectPts({x:0,y:i/L,w:s,h:1/L}));for(let i=0;i<R;i++)out.push(rectPts({x:1-s,y:i/R,w:s,h:1/R}));return out}
 function centerRows(n,h){const r=n-1,T=Math.ceil(r/2),B=r-T,t=(1-h)/(B?2:1),out=[{pts:[[0,t],[1,t],[1,t+h],[0,t+h]],big:true}];for(let i=0;i<T;i++)out.push(rectPts({x:i/T,y:0,w:1/T,h:t}));for(let i=0;i<B;i++)out.push(rectPts({x:i/B,y:t+h,w:1/B,h:t}));return out}
 function staggerCells(n,cols,amp){const counts=Array.from({length:cols},(_,i)=>Math.floor(n/cols)+(i<n%cols?1:0)),out=[];counts.forEach((k,c)=>{const w=Array(k).fill(1);if(k>=2){const s=c%2?1:-1;w[0]=1+amp*s;w[k-1]=1-amp*s}const sum=w.reduce((a,b)=>a+b,0);let y=0;w.forEach(v=>{const h=v/sum;out.push(rectPts({x:c/cols,y,w:1/cols,h}));y+=h})});return out}
 function staggerVars(n){const c=n<=5?2:n<=10?3:4,v=[staggerCells(n,c,.4),staggerCells(n,c,.7)];if(Math.floor(n/(c+1))>=2)v.push(staggerCells(n,c+1,.5));return v}
-function slantVars(n){if(n===2)return[tiltCells(gridBoxes(2,1),.1),tiltCells(gridBoxes(2,1),.2),tiltCells(gridBoxes(2,2),.12)];return heroVars(n).slice(0,2).map(h=>withBig(tiltCells(h.map(toBox),.08))).concat([withBig(tiltCells(heroVars(n)[0].map(toBox),.15))])}
-function slantGridVars(n){const b=bestCols(n),cs=[b,...[2,3,4,5].filter(c=>c!==b&&gridAllowed(n,c))].slice(0,2),v=cs.map(c=>tiltCells(gridBoxes(n,c),.05));v.splice(1,0,tiltCells(gridBoxes(n,b),.1));return v}
-function triVars(n){if(n!==3)return[polyCells('tri',n)];const apex=a=>withBig([P_([[0,0],[a,0],[0,1]]),P_([[a,0],[1,1],[0,1]]),P_([[a,0],[1,0],[1,1]])],1);
+function triVars(n){const apex=a=>withBig([P_([[0,0],[a,0],[0,1]]),P_([[a,0],[1,1],[0,1]]),P_([[a,0],[1,0],[1,1]])],1);
  return[apex(.5),withBig([P_([[0,0],[.5,0],[.5,.45],[0,1]]),P_([[.5,.45],[1,1],[0,1]]),P_([[.5,0],[1,0],[1,1],[.5,.45]])],1),apex(.28)]}
 function chevCells(n,a,alt){const L=j=>{if(j===0)return[[0,0],[1,0]];if(j===n)return[[0,1],[1,1]];const y=j/n,s=alt&&j%2===0?-1:1;return[[0,y-a*s],[.5,y+a*s],[1,y-a*s]]};const out=[];for(let j=0;j<n;j++)out.push(P_([...L(j),...L(j+1).slice().reverse()]));return out}
 function chevVars(n){const a=Math.min(.09,.3/n);return[chevCells(n,a),chevCells(n,Math.min(a*1.9,.9/n)),chevCells(n,.35/n,true)]}
@@ -443,27 +354,12 @@ function diaVars(){const D=(t,r,b,l)=>withBig([P_([t,r,b,l]),P_([[0,0],t,l]),P_(
 function zigCells(line){return[P_([[0,0],...line,[0,1]]),P_([line[0],[1,0],[1,1],...line.slice(1).reverse()])]}
 function zigVars(){return[zigCells([[.58,0],[.40,.44],[.62,.56],[.42,1]]),zigCells([[.62,0],[.32,.4],[.68,.6],[.38,1]]),zigCells([[.58,0],[.42,.25],[.58,.5],[.42,.75],[.58,1]])]}
 // 見本（よく使われる形）
-const LT={
- grid:{label:'同じ大きさ',ok:()=>true},
- hero:{label:'1枚を大きく',ok:n=>n>=3,big:true,vars:heroVars},
- center:{label:'中央に大きく',ok:n=>n>=3,big:true,vars:n=>[centerCols(n,.25),centerRows(n,.5),centerCols(n,.18)]},
- stagger:{label:'ずらし',ok:n=>n>=4,vars:staggerVars},
- slant:{label:'ななめ',ok:n=>n>=2,big:true,vars:slantVars},
- slantGrid:{label:'ななめグリッド',ok:n=>n>=4,vars:slantGridVars},
- tri:{label:'三角',ok:n=>POLY.tri.ok(n),vars:triVars},
- chev:{label:'山型',ok:n=>POLY.chev.ok(n),vars:chevVars},
- x:{label:'バツ',ok:n=>n===4,vars:xVars},
- dia:{label:'ひし形',ok:n=>n===5,big:true,vars:diaVars},
- dia9:{label:'ひし形タイル',ok:n=>POLY.dia9.ok(n),vars:n=>[polyCells('dia9',n)]},
- zig:{label:'いなずま',ok:n=>n===2,vars:zigVars}};
-const LT_ORDER=['grid','hero','center','stagger','slant','tri','x','dia','chev','zig'];
-// マイ並べ方（編集して「保存」すると増える）
+// マイ並べ方（形を編集して「決定」すると増える）
 const SH_KEY='nazo-collage-shapes';
 function loadShapes(){try{const a=JSON.parse(localStorage.getItem(SH_KEY)||'[]');return Array.isArray(a)?a.filter(s=>s&&Array.isArray(s.cells)&&s.cells.length>=2):[]}catch{return[]}}
 function saveShapes(a){try{localStorage.setItem(SH_KEY,JSON.stringify(a.slice(-30)))}catch{toast('保存できませんでした')}}
 function mineItems(n){const out=loadShapes().filter(s=>s.cells.length===n).reverse().map(s=>({k:'m:'+s.id,label:'マイ並べ方',mine:true,base:()=>s.cells.map(p=>({pts:p.map(q=>q.slice())}))}));
  loadMine().filter(m=>m.rects.length===n).forEach(m=>out.push({k:'r:'+m.id,label:'マイ並べ方',mine:true,old:true,base:()=>m.rects.map(([x,y,w,h])=>rectPts({x,y,w,h}))}));return out}
-function layItems(n){const it=mineItems(n);LT_ORDER.forEach(k=>{if(LT[k].ok(n))it.push({k,label:LT[k].label,big:!!LT[k].big})});return it}
 const geoSig=cells=>cells.map(c=>c.pts.map(p=>p.map(v=>v.toFixed(3)).join(',')).sort().join(';')).sort().join('|');
 function curateVariants(k,out,n){if(out.length<=1)return out;const pick=(...idx)=>idx.filter(i=>i>=0&&i<out.length).map(i=>out[i]);switch(k){
  case 'hero':return pick(...(n>=8?[0,1,2]:[0,1]));
@@ -476,9 +372,9 @@ function curateVariants(k,out,n){if(out.length<=1)return out;const pick=(...idx)
  case 'dia':return pick(0,1);
  case 'zig':return pick(0);
  default:return out}}
-function variants(k,n){const ck=k+':'+n+':'+S.shape,mine=k.startsWith('m:')||k.startsWith('r:');if(!mine&&LY.cache.has(ck))return LY.cache.get(ck);let out=[];
+function variants(k,n){if(k.startsWith('f:')){const d=flatDesigns(n).find(x=>'f:'+x.id===k);return d?[{cells:d.cells}]:[]}const ck=k+':'+n+':'+S.shape,mine=k.startsWith('m:')||k.startsWith('r:');if(!mine&&LY.cache.has(ck))return LY.cache.get(ck);let out=[];
  if(k==='grid')out=[1,2,3,4,5].filter(c=>gridAllowed(n,c)).map(c=>({c,cells:gridBoxes(n,c).map(rectPts)}));
- else if(LT[k]&&LT[k].ok(n)){const seen=new Set();for(const cells of LT[k].vars(n)){const s=geoSig(cells);if(seen.has(s))continue;seen.add(s);out.push({cells})}}
+
  else{const m=mineItems(n).find(i=>i.k===k);if(m)out=[{cells:m.base()}]}
  out=curateVariants(k,out,n);if(!mine)LY.cache.set(ck,out);return out}
 // 今の並べ方（系統・何番目のデザインか・編集中か）
@@ -550,7 +446,7 @@ function splitCorner(m,P,side){const J=m.V.length,p=m.V[P],oth=sideOf(p).find(s=
  for(const k in m.L){if(m.L[k].a===P)m.L[k].a=J;if(m.L[k].b===P)m.L[k].b=J}return J}
 function handleVerts(m){const has=new Set();m.C.forEach(c=>c.forEach((a,k)=>{const b=c[(k+1)%c.length];if(!sameSide(m.V[a],m.V[b])){has.add(a);has.add(b)}}));return [...has]}
 function sideRange(m,vi,side){const ax=side==='t'||side==='b'?0:1,cur=m.V[vi][ax];let lo=0,hi=1;m.V.forEach((p,i)=>{if(i===vi||!sideOf(p).includes(side))return;const c=p[ax];if(c<cur-EPS&&c>lo)lo=c;if(c>cur+EPS&&c<hi)hi=c});return[lo+.04,hi-.04]}
-// 編集画面の操作バー：反転・1つ戻す・元に戻す・保存
+// 形の編集画面：上に「やめる」、下に「反転・1つ戻す・最初に戻す・決定」
 const lyBar=document.createElement('div');lyBar.id='lyBar';lyBar.hidden=true;
 lyBar.innerHTML='<div class="lyHead"><button id="lyCancel" title="変更を捨てて編集を終わる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>やめる</button><p class="lyTip">○を動かして形を変える・位置がそろうと青い点線・枠の近くで枠にくっつく</p></div><div class="lyRow">'
  +'<button id="lyFlip" title="左右・上下を反転"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M8 7 4 12l4 5M16 7l4 5-4 5"/></svg>反転</button>'
@@ -561,7 +457,7 @@ lyBar.innerHTML='<div class="lyHead"><button id="lyCancel" title="変更を捨�
 ws.append(lyBar);
 const lyLayer=document.createElement('div');lyLayer.className='dgLayer';
 function layEdit(on){if(on)LY.before={lay:S.lay?JSON.parse(JSON.stringify(S.lay)):null,mesh:S.mesh,auto:S.auto};if(on&&S.auto!==false){const vs=variants('grid',S.n),c=gridAllowed(S.n,S.cols)?S.cols:bestCols(S.n);S.lay={k:'grid',v:Math.max(0,vs.findIndex(x=>x.c===c))};S.auto=false}LY.editing=on;LY.sel=-1;LY.sig='';LY.hist=[];if(on)hintOnce('nazo-ly-hint3','○を動かすと形が変わります。「決定」でマイ並べ方（★）に、「やめる」で変更を捨てて閉じます');render()}
-// 保存：変えた形をマイ並べ方（★）にする。マイ並べ方を編集したときは上書き。何も変えていなければそのまま閉じる
+// 決定：変えた形をマイ並べ方（★）にする。マイ並べ方を編集したときは上書き。何も変えていなければそのまま閉じる
 function finishEdit(quiet){const cur=layNow();LY.editing=false;LY.sel=-1;LY.sig='';LY.hist=[];
  if(cur.edited){const cells=cur.cells.map(c=>c.pts.map(p=>[+p[0].toFixed(4),+p[1].toFixed(4)])),a=loadShapes();let id,over=false;
   if(cur.k.startsWith('m:')){id=cur.k.slice(2);const s=a.find(x=>x.id===id);if(s){s.cells=cells;over=true}else a.push({id,cells})}else{id=Date.now().toString(36);a.push({id,cells})}
@@ -606,7 +502,7 @@ const installDragBeforeLy=installDrag;installDrag=function(){if(!LY.editing)inst
 const setCountBeforeLy=setCount;setCount=function(n){if(LY.editing)finishEdit(false);return setCountBeforeLy(n)};
 render();
 
-/* ===== moko-fix: output size / batch face hide / omakase / hints ===== */
+/* ===== 保存サイズ・まとめて顔を隠す・おまかせ・ヒント ===== */
 function outEdge(){try{const v=Number(localStorage.getItem('nazo-collage-outedge'));return [1800,2400,3600].includes(v)?v:2400}catch(_){return 2400}}
 function collageFileName(){const d=new Date(),z=n=>String(n).padStart(2,'0');return `collage-${d.getFullYear()}${z(d.getMonth()+1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}.jpg`}
 let batchRunning=false,batchWaiter=null;
@@ -651,7 +547,7 @@ async function hideAllFaces(){
   if(failed){toast('自動顔認識の準備ができませんでした。初回だけ通信が必要です（写真自体は送信されません）。通信を確認してもう一度お試しください');return -1}
   return total;
 }
-/* ===== moko-fix: 顔を隠す (タップ=実行 / 長押し=設定) ===== */
+/* ===== 顔を隠す（タップ＝実行／長押し＝設定） ===== */
 function hideSettings(){try{const s=JSON.parse(localStorage.getItem('nazo-hide-settings')||'{}');return{tool:['last','stamp','mosaic'].includes(s.tool)?s.tool:'last',sens:Math.max(0,Math.min(100,Number.isFinite(+s.sens)?+s.sens:67)),layout:!!s.layout}}catch(_){return{tool:'last',sens:67,layout:false}}}
 function saveHideSettings(s){try{localStorage.setItem('nazo-hide-settings',JSON.stringify(s))}catch(_){}}
 async function runHideFaces(){
@@ -688,7 +584,7 @@ function openHideSettings(){
 })();
 
 
-/* ===== moko-fix: flat layout catalog (SNSで人気の形を1つずつ並べる) ===== */
+/* ===== 並べ方の見本（SNSで人気の形を1つずつ並べる） ===== */
 function heroSideCells(n){const r=n-1,w=.58,out=[{pts:[[0,0],[w,0],[w,1],[0,1]],big:true}];for(let i=0;i<r;i++)out.push(rectPts({x:w,y:i/r,w:1-w,h:1/r}));return out}
 function mixCells(n){const R=(x,y,w,h,b)=>({pts:[[x,y],[x+w,y],[x+w,y+h],[x,y+h]],...(b?{big:true}:{})});const T={
 4:[R(0,0,.62,.62,1),R(.62,0,.38,.62),R(0,.62,.5,.38),R(.5,.62,.5,.38)],
@@ -716,14 +612,11 @@ function flatDesigns(n){const out=[],seen=new Set();const add=(id,label,cells)=>
  if(n===2)add('zig','なみなみ',zigVars()[0]);
  if(n>=7){const alt=[3,4,2,5].filter(c=>c!==bc&&gridAllowed(n,c))[0];if(alt)add('gridAlt',alt+'列グリッド',gridBoxes(n,alt).map(rectPts))}
  return out}
-const _variantsFlat=variants;
-variants=function(k,n){if(typeof k==='string'&&k.startsWith('f:')){const d=flatDesigns(n).find(x=>'f:'+x.id===k);return d?[{cells:d.cells}]:[]}return _variantsFlat(k,n)};
-const _layItemsFlat=layItems;
-layItems=function(n){return [...mineItems(n),...flatDesigns(n).map(d=>({k:'f:'+d.id,label:d.label,big:!!(d.cells[0]&&d.cells[0].big)}))]};
+function layItems(n){return [...mineItems(n),...flatDesigns(n).map(d=>({k:'f:'+d.id,label:d.label,big:!!(d.cells[0]&&d.cells[0].big)}))]};
 {const st=$('#layoutStrip');if(st)st.dataset.sig='';render()}
 
 
-/* ===== moko-fix: polygon area centroid for label placement ===== */
+/* ===== ラベルを枠の形の中心に置く ===== */
 function polyCentroid(pts){let a=0,cx=0,cy=0;for(let i=0;i<pts.length;i++){const p=pts[i],q=pts[(i+1)%pts.length],f=p[0]*q[1]-q[0]*p[1];a+=f;cx+=(p[0]+q[0])*f;cy+=(p[1]+q[1])*f}if(Math.abs(a)<1e-9)return[pts.reduce((s,p)=>s+p[0],0)/pts.length,pts.reduce((s,p)=>s+p[1],0)/pts.length];a*=.5;return[cx/(6*a),cy/(6*a)]}
 
 /* ===== 画質は保存ボタンの長押しで選ぶ ===== */
