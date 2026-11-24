@@ -121,6 +121,17 @@ img{-webkit-user-drag:none;user-drag:none}
 #row2{flex-wrap:nowrap}#row2 .seg button{width:29px}#row2 #bgSeg .swCustom{width:28px}@media (max-width:374px){#row2{flex-wrap:nowrap;gap:3px}#row2 .seg button{width:21px}#row2 #bgSeg .swCustom{width:21px}#row2 .sw{width:16px;height:16px}#row2 .seg svg{width:17px;height:17px}#row2 .segLabel{padding:0 1px 0 4px;font-size:9.5px}}
 #lyBar .lyHead{display:flex;align-items:center;gap:6px}#lyBar .lyHead .lyTip{flex:1;text-align:left}
 #lyBar #lyCancel{flex:0 0 auto;min-height:30px;min-width:0;padding:3px 9px 3px 6px;font-size:11px;display:flex;align-items:center;gap:3px;border-radius:15px;background:#f6eff3;border-color:transparent;color:#7b6470}#lyBar #lyCancel svg{width:13px;height:13px}
+
+/* 系統の見本・点の表示・ポラロイド枠・＋ボタン */
+.lyDots{position:absolute;left:0;right:0;bottom:2px;display:flex;justify-content:center;gap:2px;pointer-events:none}.lyDots b{width:4px;height:4px;border-radius:50%;background:#d9c5cf}.lyDots b.on{background:var(--ac)}
+.layoutStrip polygon.pf{fill:#fff;stroke:#d6c2cc;stroke-width:.6}
+#tallBtn{position:relative}#tallBtn::after{content:"";position:absolute;right:3px;bottom:4px;width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.4}#tallBtn.pressing{animation:lpPulse .45s ease-out}
+.workspace .addRow{position:absolute;right:12px;bottom:12px;padding:0!important;z-index:4}
+.workspace.noPhotos .addRow{right:auto;bottom:auto;left:50%;top:50%;transform:translate(-50%,-50%)}
+.workspace.noPhotos .addRow #add{box-shadow:0 6px 20px #57465126}
+.workspace:not(.noPhotos) .addRow #add{width:48px;height:48px;min-height:48px;padding:0;border-radius:50%;background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 4px 14px #ce688f66;display:flex;align-items:center;justify-content:center}
+.workspace:not(.noPhotos) .addRow #add svg{width:24px;height:24px;stroke-width:2.6}
+.workspace.lyEditing .addRow{display:none!important}
 </style></head><body>
 
 <main class="workspace" id="workspace"><button id="boardFit" aria-label="全体表示" title="全体表示" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button><span id="loadProgress" role="status" hidden></span><div class="board" id="board" aria-label="コラージュのプレビュー"></div><div class="addRow"><button id="add" type="button">まとめて選ぶ</button></div></main>
@@ -628,4 +639,66 @@ function polyCentroid(pts){let a=0,cx=0,cy=0;for(let i=0;i<pts.length;i++){const
  b.addEventListener('pointermove',e=>{if(Math.hypot(e.clientX-x0,e.clientY-y0)>8)stop()});['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,stop));
  b.addEventListener('click',e=>{if(fired){e.stopImmediatePropagation();e.preventDefault();fired=false}},true);
  b.addEventListener('contextmenu',e=>e.preventDefault())})();
+
+/* ===== 並べ方の系統（タップで同じ系統の別デザインに切り替わる） ===== */
+const FAMS=[['grid','グリッド'],['hero','主役'],['film','フィルム'],['pola','ポラロイド'],['cut','切り抜き'],['slant','ななめ'],['play','形あそび']];
+const toBoxU=c=>({x:c.pts[0][0],y:c.pts[0][1],w:c.pts[2][0]-c.pts[0][0],h:c.pts[2][1]-c.pts[0][1]});
+// 実際の縦横比で形を作る（丸やハートがつぶれないように）。物理座標は 幅R×高さ1
+const phys=pts=>{const R=boardRatio();return pts.map(([x,y])=>[x/R,y])};
+function circlePts(cx,cy,r,k=40){return Array.from({length:k},(_,i)=>{const t=i/k*Math.PI*2;return[cx+r*Math.cos(t),cy+r*Math.sin(t)]})}
+function heartPts(cx,cy,r,k=56){return Array.from({length:k},(_,i)=>{const t=i/k*Math.PI*2,x=16*Math.pow(Math.sin(t),3),y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);return[cx+x/17*r,cy-(y+2)/17*r]})}
+function roundRectPts(x,y,w,h,r,k=6){const out=[],c=[[x+w-r,y+r,-Math.PI/2],[x+w-r,y+h-r,0],[x+r,y+h-r,Math.PI/2],[x+r,y+r,Math.PI]];for(const [cx,cy,a0] of c)for(let i=0;i<=k;i++){const t=a0+i/k*Math.PI/2;out.push([cx+r*Math.cos(t),cy+r*Math.sin(t)])}return out}
+// 主役＋下に小さく並べる（切り抜き系で共通）。shape(cx,cy,r)で主役の形を作る
+function cutCells(n,heroShape,smallShape){const R=boardRatio(),out=[],rest=n-1,bandTop=.7,bandH=.27,per=Math.min(rest,5),rows=Math.ceil(rest/per);
+ const hr=Math.min(.3,R*.42);out.push({pts:phys(heroShape(R/2,.36,hr)),big:true});
+ const cellH=bandH/rows;for(let j=0,k=0;j<rows;j++){const m=Math.min(per,rest-k),cw=R*.9/per,r=Math.min(cellH*.44,cw*.44),x0=R/2-m*cw/2;for(let i=0;i<m;i++,k++)out.push({pts:phys(smallShape(x0+cw*(i+.5),bandTop+cellH*(j+.5),r))})}return out}
+function minimalCells(n){const out=[{pts:[[.1,.07],[.9,.07],[.9,.64],[.1,.64]],big:true}],r=n-1,per=Math.min(r,4),rows=Math.ceil(r/per),g=.03,top=.7,h=(.93-top-g*(rows-1))/rows;for(let j=0,k=0;j<rows;j++){const m=Math.min(per,r-k),w=(.8-g*(m-1))/m;for(let i=0;i<m;i++,k++)out.push(rectPts({x:.1+i*(w+g),y:top+j*(h+g),w,h}))}return out}
+function purikuraCells(n){const g=.025,top=.04,h=(.92-g*(n-1))/n,R=boardRatio(),w=Math.min(.7,h*1.25/R),x=(1-w)/2;return Array.from({length:n},(_,i)=>rectPts({x,y:top+i*(h+g),w,h}))}
+// ポラロイド：白い枠（下が太い）。tilt=true で少し傾けて重ねる（写真ダンプ風）
+function polaroidCells(n,tilt){const R=boardRatio(),cols=n<=2?n:n<=4?2:n<=9?3:4,rows=Math.ceil(n/cols),cw=1/cols,ch=1/rows,ANG=[-6,4,-3,6,-5,3,-4,5,-2,6,-6,3,-3,5,-5],out=[];
+ for(let i=0;i<n;i++){const r=Math.floor(i/cols),inRow=Math.min(cols,n-r*cols),c=i%cols,off=(cols-inRow)*cw/2,bx=off+c*cw,by=r*ch;
+  const s=tilt?1.12:1,fw0=cw*.86,fh0=ch*.88,fw=Math.min(fw0,fh0*R*.86)*s,fh=Math.min(fh0,fw/R/.86*1)*1,cx=bx+cw/2,cy=by+ch/2,mx=fw*.07,my=mx*R,
+   fr=[[cx-fw/2,cy-fh/2],[cx+fw/2,cy-fh/2],[cx+fw/2,cy+fh/2],[cx-fw/2,cy+fh/2]],ph=[[cx-fw/2+mx,cy-fh/2+my],[cx+fw/2-mx,cy-fh/2+my],[cx+fw/2-mx,cy+fh/2-my*3.4],[cx-fw/2+mx,cy+fh/2-my*3.4]];
+  const a=tilt?ANG[i%ANG.length]*Math.PI/180:0,rot=p=>{const X=(p[0]-cx)*R,Y=p[1]-cy;return[cx+(X*Math.cos(a)-Y*Math.sin(a))/R,cy+X*Math.sin(a)+Y*Math.cos(a)]};
+  out.push({pts:ph.map(rot),frame:fr.map(rot)})}return out}
+function famVariants(fam,n){const bc=bestCols(n),v=[],add=(name,cells,extra={})=>{if(cells&&cells.length===n)v.push({name,cells,...extra})};
+ if(fam==='grid'){add('グリッド',gridBoxes(n,bc).map(rectPts));[2,3,4,5].filter(c=>c!==bc&&gridAllowed(n,c)).slice(0,2).forEach(c=>add(c+'列',gridBoxes(n,c).map(rectPts)));if(n<=5&&bc!==n)add('たて分割',gridBoxes(n,n).map(rectPts))}
+ if(fam==='hero'&&n>=3){const per=(n-1)<=4?n-1:Math.ceil((n-1)/2);add('上に大きく',heroCells(n,.55,per));add('左に大きく',heroSideCells(n));add('まんなか',centerCols(n,.25));if(n>=4)add('上下でまんなか',centerRows(n,.5));add('余白ミニマル',minimalCells(n));if(n>=4&&n<=9)add('ミックス',mixCells(n))}
+ if(fam==='hero'&&n===2){add('左に大きく',[rectPts({x:0,y:0,w:.64,h:1}),rectPts({x:.64,y:0,w:.36,h:1})].map((c,i)=>({...c,big:i===0})));add('余白ミニマル',minimalCells(2))}
+ if(fam==='film'){if(n<=6)add('フィルム',gridBoxes(n,1).map(rectPts));if(n<=6)add('プリクラ風',purikuraCells(n));if(n>6)add('フィルム',gridBoxes(n,2).map(rectPts))}
+ if(fam==='pola'&&n<=12){add('ポラロイド',polaroidCells(n,false),{noEdit:true});add('写真ダンプ',polaroidCells(n,true),{noEdit:true})}
+ if(fam==='cut'&&n<=11){add('丸',cutCells(n,circlePts,circlePts),{noEdit:true});add('ハート',cutCells(n,heartPts,circlePts),{noEdit:true});add('角丸',cutCells(n,(cx,cy,r)=>roundRectPts(cx-r*1.25,cy-r,r*2.5,r*2,r*.3),(cx,cy,r)=>roundRectPts(cx-r,cy-r,r*2,r*2,r*.3)),{noEdit:true})}
+ if(fam==='slant'){if(n>=3){const per=(n-1)<=4?n-1:Math.ceil((n-1)/2);add('ななめ',withBig(tiltCells(heroCells(n,.55,per).map(toBoxU),.08)))}else add('ななめ',tiltCells(gridBoxes(2,2),.12));if(n>=4)add('ななめグリッド',tiltCells(gridBoxes(n,bc),.06))}
+ if(fam==='play'){if(n===2){add('いなずま',zigVars()[0]);add('なみなみ',zigVars()[2])}if(n===3){add('さんかく',triVars(3)[0]);add('Y字',triVars(3)[1])}if(n===4){add('バツ',xVars()[0]);add('風車',xVars()[1])}if(n===5){add('ひし形',diaVars()[0]);add('フレーム',diaVars()[1])}if(n>=3&&n<=8){const cv=chevVars(n);add('ジグザグ',cv[cv.length-1]);add('山型',cv[0])}}
+ const seen=new Set();return v.filter(x=>{const s=geoSig(x.cells);if(seen.has(s))return false;seen.add(s);return true})}
+const variantsBeforeFam=variants;variants=function(k,n){if(k.startsWith('g:')){const ck=k+':'+n+':'+S.shape;if(LY.cache.has(ck))return LY.cache.get(ck);const out=famVariants(k.slice(2),n);LY.cache.set(ck,out);return out}return variantsBeforeFam(k,n)};
+layItems=function(n){return [...mineItems(n),...FAMS.filter(([f])=>famVariants(f,n).length).map(([f,label])=>({k:'g:'+f,label,big:f==='hero'||f==='cut'}))]};
+// 系統ごとに最後に選んだデザインを覚えておく
+chooseItem=function(it){if(it.k==='grid'){const vs=variants('grid',S.n),c=gridAllowed(S.n,S.cols)?S.cols:bestCols(S.n);S.lay={k:'grid',v:Math.max(0,vs.findIndex(x=>x.c===c))}}else{const nv=variants(it.k,S.n).length;S.lay={k:it.k,v:Math.min((S.famV||{})[it.k]||0,Math.max(0,nv-1))}}S.auto=false;S.mesh=null};
+tapItem=function(it){if(busyEditing())return;const cur=layNow(),vs=variants(it.k,S.n);
+ if(S.auto===false&&cur.k===it.k){if(cur.nv<2){toast((vs[cur.v]&&vs[cur.v].name)||it.label);return}const v=(cur.v+1)%cur.nv;S.lay={k:it.k,v};S.famV={...(S.famV||{}),[it.k]:v};S.mesh=null;commit();toast(((vs[v]&&vs[v].name)||it.label)+'　'+(v+1)+' / '+cur.nv);return}
+ chooseItem(it);commit();const now=layNow();toast(((vs[now.v]&&vs[now.v].name)||it.label)+(now.nv>1?'　タップで別のデザイン':''))};
+const longItemBeforeFam=longItem;longItem=function(it){if(!it.mine&&it.k.startsWith('g:')){const cur=layNow();if(!(S.auto===false&&cur.k===it.k)){chooseItem(it);commit()}const vs=variants(it.k,S.n),now=layNow();if(vs[now.v]&&vs[now.v].noEdit){toast('この配置は形の編集ができません');return}if(busyEditing())return;layEdit(true);return}return longItemBeforeFam(it)};
+// 画面と保存に白い枠（ポラロイド）を描く
+const layCellsBeforeFam=layCells;layCells=function(){const raw=layNow().cells;return layCellsBeforeFam().map((c,i)=>raw[i]&&raw[i].frame?{...c,frame:raw[i].frame}:c)};
+const layGeomsBeforeFam=layGeoms;layGeoms=function(W,H,gap){const cells=layCells(),G=layGeomsBeforeFam(W,H,gap),g=S.blend?0:gap,iw=W-2*g,ih=H-2*g;return G.map((x,i)=>cells[i]&&cells[i].frame?{...x,frame:cells[i].frame.map(([u,v])=>[g+u*iw,g+v*ih])}:x)};
+function drawFrame(ctx,pts,k){ctx.save();ctx.shadowColor='#0000002e';ctx.shadowBlur=8*k;ctx.shadowOffsetY=2*k;ctx.fillStyle='#fff';ctx.beginPath();pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();ctx.restore()}
+const fxCellBeforeFam=fxCell;let frameScale=1;fxCell=function(im,p,G,F,R){return fxCellBeforeFam(im,p,G,F,R)};
+// layPaint と output で、各写真の前に枠を描く
+layPaint=async function(G0){const tk=++fxToken;board.classList.add('fx');board.classList.toggle('fxd',G0.some(g=>g.diag));if(fxCanvas.parentNode!==board)board.prepend(fxCanvas);const W0=parseFloat(board.style.width)||board.offsetWidth,H0=parseFloat(board.style.height)||board.offsetHeight,dpr=Math.min(2,window.devicePixelRatio||1),W=Math.round(W0*dpr),H=Math.round(H0*dpr),G=layGeoms(W,H,S.gap*Math.max(W,H)/1600),F=S.blend?featherPx(W,H):0,R=radiusPx(W,H);const ims=await Promise.all(S.slots.map(p=>p?fxImg(p.src).catch(()=>null):null));if(tk!==fxToken)return;const t=document.createElement('canvas');t.width=W;t.height=H;const x=t.getContext('2d');G.forEach((g,i)=>{if(g.frame)drawFrame(x,g.frame,dpr);const p=S.slots[i];if(p&&ims[i]){const r=fxCell(ims[i],p,g,F,R);x.drawImage(r.c,r.x0,r.y0)}else{x.save();polyPath(x,g.hit,R);x.fillStyle=g.frame?'#f3edf0':'#ffffff8c';x.fill();x.setLineDash([4*dpr,4*dpr]);x.lineWidth=dpr;x.strokeStyle='#cdbbc5';x.stroke();x.restore()}});fxCanvas.width=W;fxCanvas.height=H;fxCanvas.getContext('2d').drawImage(t,0,0)};
+output=async function(){const d=dimensions(outEdge()),c=document.createElement('canvas');c.width=d.W;c.height=d.H;const ctx=c.getContext('2d');ctx.fillStyle=S.bg;ctx.fillRect(0,0,c.width,c.height);if(S.bgImg)await drawBgImg(ctx,c.width,c.height);normalizeLayout();const G=layGeoms(d.W,d.H,d.gap),F=S.blend?featherPx(d.W,d.H):0,R=radiusPx(d.W,d.H),k=Math.max(d.W,d.H)/500;for(let i=0;i<S.n;i++){if(!G[i])continue;if(G[i].frame)drawFrame(ctx,G[i].frame,k);const p=S.slots[i];if(!p)continue;const r=fxCell(await getImage(p),p,G[i],F,R);ctx.drawImage(r.c,r.x0,r.y0);drawLabel(ctx,p,labelRect(G[i]),outEdge());await breathe()}return encode(c,'image/jpeg',.94)};
+// 見本の図：枠も描く・選んでいる系統は点（●○○）で何番目か表示
+const thumbOfBeforeFam=thumbOf;thumbOf=function(cells,bigIdx=-1){let s=thumbOfBeforeFam(cells,bigIdx);if(cells.some(c=>c.frame)){const r=boardRatio(),T0=46,w=r>=1?T0:T0*r,h=r>=1?T0/r:T0,g=1.6;const fr=cells.filter(c=>c.frame).map(c=>'<polygon class="pf" points="'+c.frame.map(([x,y])=>(g+x*(w-2*g)).toFixed(2)+','+(g+y*(h-2*g)).toFixed(2)).join(' ')+'"/>').join('');s=s.replace(/(<svg[^>]*>)/,'$1'+fr)}return s};
+const renderLCBeforeFam=renderLayoutControls;renderLayoutControls=function(){renderLCBeforeFam();const strip=$('#layoutStrip');if(!strip)return;const cur=layNow();strip.querySelectorAll('button[data-k]').forEach(b=>{b.querySelector('.lyCount')?.remove();b.querySelector('.lyDots')?.remove();const k=b.dataset.k,nv=variants(k,S.n).length;if(nv<2||LY.editing)return;const on=S.auto===false&&cur.k===k,vi=on?cur.v:Math.min((S.famV||{})[k]||0,nv-1);const d=document.createElement('i');d.className='lyDots';d.setAttribute('aria-hidden','true');d.innerHTML=Array.from({length:nv},(_,i)=>'<b class="'+(i===vi?'on':'')+'"></b>').join('');b.append(d)})};
+// 古い見本（f:）を選んでいた下書きは、近い系統に移す
+(()=>{const map={grid:'grid',row:'grid',gridAlt:'grid',heroT:'hero',heroL:'hero',center:'hero',centerR:'hero',mix:'hero',film:'film',stagger:'grid',slant:'slant',tri:'play',x:'play',dia:'play',frame:'play',chev:'play',zig:'play'};if(S.lay&&S.lay.k&&S.lay.k.startsWith('f:')){S.lay={k:'g:'+(map[S.lay.k.slice(2)]||'grid'),v:0}}})();
+/* ===== 縦長ボタン：タップで縦長、長押しで 4:5 と 9:16（ストーリー）を切り替え ===== */
+SHAPES.push('0.5625');
+(()=>{const b=document.querySelector('#shapeSeg [data-shape="0.8"]');if(!b)return;b.id='tallBtn';let pref=(()=>{try{return localStorage.getItem('nazo-collage-tall')==='0.5625'?'0.5625':'0.8'}catch(_){return '0.8'}})();
+ const sync=()=>{const v=S.shape==='0.5625'||S.shape==='0.8'?S.shape:pref;b.dataset.shape=v;const st=v==='0.5625';b.title=(st?'縦長 9:16（ストーリー）':'縦長 4:5')+'・長押しで切り替え';b.setAttribute('aria-label',st?'縦長 9:16':'縦長 4:5');const r=b.querySelector('rect');if(r){if(st){r.setAttribute('x','7');r.setAttribute('y','2.5');r.setAttribute('width','10');r.setAttribute('height','19')}else{r.setAttribute('x','5.5');r.setAttribute('y','3.5');r.setAttribute('width','13');r.setAttribute('height','17')}}};
+ b.onclick=null;pressable(b,()=>{const v=b.dataset.shape;if(S.shape===v)return;S.shape=v;if(S.auto!==false)recommendLayout();commit()},()=>{const now=S.shape==='0.5625'||S.shape==='0.8'?S.shape:pref;pref=now==='0.8'?'0.5625':'0.8';try{localStorage.setItem('nazo-collage-tall',pref)}catch(_){}S.shape=pref;if(S.auto!==false)recommendLayout();commit();toast(pref==='0.5625'?'縦長 9:16（ストーリー用）':'縦長 4:5（投稿用）')});
+ const r0=render;render=function(){sync();r0()};sync()})();
+/* ===== 「まとめて選ぶ」：写真がないときは中央に大きく、あるときは右下の丸い＋ボタンに ===== */
+(()=>{const r0=render;render=function(){r0();const has=S.slots.some(Boolean),add=$('#add');ws.classList.toggle('noPhotos',!has);if(has&&!loading){add.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';add.setAttribute('aria-label','写真をまとめて追加');add.title='写真をまとめて追加'}else{add.removeAttribute('aria-label')}}})();
+LY.cache.clear();{const st=$('#layoutStrip');if(st)st.dataset.sig='';render()}
 </script></body></html>
