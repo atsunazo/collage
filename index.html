@@ -122,7 +122,7 @@ img{-webkit-user-drag:none;user-drag:none}
 #lyBar .lyHead{display:flex;align-items:center;gap:6px}#lyBar .lyHead .lyTip{flex:1;text-align:left}
 #lyBar #lyCancel{flex:0 0 auto;min-height:30px;min-width:0;padding:3px 9px 3px 6px;font-size:11px;display:flex;align-items:center;gap:3px;border-radius:15px;background:#f6eff3;border-color:transparent;color:#7b6470}#lyBar #lyCancel svg{width:13px;height:13px}
 
-/* 系統の見本・点の表示・ポラロイド枠・＋ボタン */
+/* 系統の見本・点の表示・ポラロイド枠・＋ボタン・自由配置 */
 .lyDots{position:absolute;left:0;right:0;bottom:2px;display:flex;justify-content:center;gap:2px;pointer-events:none}.lyDots b{width:4px;height:4px;border-radius:50%;background:#d9c5cf}.lyDots b.on{background:var(--ac)}
 .layoutStrip polygon.pf{fill:#fff;stroke:#d6c2cc;stroke-width:.6}
 #tallBtn{position:relative}#tallBtn::after{content:"";position:absolute;right:3px;bottom:4px;width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.4}#tallBtn.pressing{animation:lpPulse .45s ease-out}
@@ -132,6 +132,10 @@ img{-webkit-user-drag:none;user-drag:none}
 .workspace:not(.noPhotos) .addRow #add{width:48px;height:48px;min-height:48px;padding:0;border-radius:50%;background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 4px 14px #ce688f66;display:flex;align-items:center;justify-content:center}
 .workspace:not(.noPhotos) .addRow #add svg{width:24px;height:24px;stroke-width:2.6}
 .workspace.lyEditing .addRow{display:none!important}
+.dgLayer.free{pointer-events:auto;touch-action:none;cursor:move}
+.dgLayer.free .dgOutline polygon.other{fill:transparent;stroke:#ffffffb3;stroke-dasharray:4 4}
+.dgLayer.free .dgOutline polygon.sel{fill:transparent;stroke:var(--ac);stroke-width:2.5;stroke-dasharray:none}
+#lyBar button[hidden]{display:none!important}
 </style></head><body>
 
 <main class="workspace" id="workspace"><button id="boardFit" aria-label="全体表示" title="全体表示" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button><span id="loadProgress" role="status" hidden></span><div class="board" id="board" aria-label="コラージュのプレビュー"></div><div class="addRow"><button id="add" type="button">まとめて選ぶ</button></div></main>
@@ -648,50 +652,101 @@ const phys=pts=>{const R=boardRatio();return pts.map(([x,y])=>[x/R,y])};
 function circlePts(cx,cy,r,k=40){return Array.from({length:k},(_,i)=>{const t=i/k*Math.PI*2;return[cx+r*Math.cos(t),cy+r*Math.sin(t)]})}
 function heartPts(cx,cy,r,k=56){return Array.from({length:k},(_,i)=>{const t=i/k*Math.PI*2,x=16*Math.pow(Math.sin(t),3),y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);return[cx+x/17*r,cy-(y+2)/17*r]})}
 function roundRectPts(x,y,w,h,r,k=6){const out=[],c=[[x+w-r,y+r,-Math.PI/2],[x+w-r,y+h-r,0],[x+r,y+h-r,Math.PI/2],[x+r,y+r,Math.PI]];for(const [cx,cy,a0] of c)for(let i=0;i<=k;i++){const t=a0+i/k*Math.PI/2;out.push([cx+r*Math.cos(t),cy+r*Math.sin(t)])}return out}
-// 主役＋下に小さく並べる（切り抜き系で共通）。shape(cx,cy,r)で主役の形を作る
-function cutCells(n,heroShape,smallShape){const R=boardRatio(),out=[],rest=n-1,bandTop=.7,bandH=.27,per=Math.min(rest,5),rows=Math.ceil(rest/per);
- const hr=Math.min(.3,R*.42);out.push({pts:phys(heroShape(R/2,.36,hr)),big:true});
- const cellH=bandH/rows;for(let j=0,k=0;j<rows;j++){const m=Math.min(per,rest-k),cw=R*.9/per,r=Math.min(cellH*.44,cw*.44),x0=R/2-m*cw/2;for(let i=0;i<m;i++,k++)out.push({pts:phys(smallShape(x0+cw*(i+.5),bandTop+cellH*(j+.5),r))})}return out}
+// 形のまわりに白いふち（シール風）を付ける
+const grow=(pts,k)=>{const [cx,cy]=polyCentroid(pts);return pts.map(([x,y])=>[cx+(x-cx)*k,cy+(y-cy)*k])};
+const sticker=(pts,r)=>({pts,frame:grow(pts,(r+.016)/r)});
+// 切り抜き：主役を大きく、ほかは少し重ねてシールのように並べる
+function cutCells(n,heroShape,smallShape){const R=boardRatio(),rest=n-1,per=rest<=4?rest:Math.ceil(rest/2),rows=Math.ceil(rest/per),hr=Math.min(rows>1?.31:.35,R*.46),hcy=rows>1?.36:.4,cw=R*.96/per,sr=Math.min(cw*.47,rows>1?.115:.15),out=[{...sticker(phys(heroShape(R/2,hcy,hr)),hr),big:true}];
+ const y0=Math.min(hcy+hr+sr*.3,1-sr-.025-(rows-1)*(2*sr+.012));for(let j=0,k=0;j<rows;j++){const m=Math.min(per,rest-k),x0=R/2-m*cw/2;for(let i=0;i<m;i++,k++){const s=smallShape(x0+cw*(i+.5),y0+j*(2*sr+.012),sr);out.push(sticker(phys(s),sr))}}return out}
 function minimalCells(n){const out=[{pts:[[.1,.07],[.9,.07],[.9,.64],[.1,.64]],big:true}],r=n-1,per=Math.min(r,4),rows=Math.ceil(r/per),g=.03,top=.7,h=(.93-top-g*(rows-1))/rows;for(let j=0,k=0;j<rows;j++){const m=Math.min(per,r-k),w=(.8-g*(m-1))/m;for(let i=0;i<m;i++,k++)out.push(rectPts({x:.1+i*(w+g),y:top+j*(h+g),w,h}))}return out}
 function purikuraCells(n){const g=.025,top=.04,h=(.92-g*(n-1))/n,R=boardRatio(),w=Math.min(.7,h*1.25/R),x=(1-w)/2;return Array.from({length:n},(_,i)=>rectPts({x,y:top+i*(h+g),w,h}))}
 // ポラロイド：白い枠（下が太い）。tilt=true で少し傾けて重ねる（写真ダンプ風）
-function polaroidCells(n,tilt){const R=boardRatio(),cols=n<=2?n:n<=4?2:n<=9?3:4,rows=Math.ceil(n/cols),cw=1/cols,ch=1/rows,ANG=[-6,4,-3,6,-5,3,-4,5,-2,6,-6,3,-3,5,-5],out=[];
+function polaroidCells(n,tilt){const R=boardRatio(),cols=n<=2?n:n<=4?2:n<=9?3:4,rows=Math.ceil(n/cols),cw=1/cols,ch=1/rows,ANG=[-7,5,-4,7,-6,4,-5,6,-3,7,-7,4,-4,6,-6],out=[];
  for(let i=0;i<n;i++){const r=Math.floor(i/cols),inRow=Math.min(cols,n-r*cols),c=i%cols,off=(cols-inRow)*cw/2,bx=off+c*cw,by=r*ch;
-  const s=tilt?1.12:1,fw0=cw*.86,fh0=ch*.88,fw=Math.min(fw0,fh0*R*.86)*s,fh=Math.min(fh0,fw/R/.86*1)*1,cx=bx+cw/2,cy=by+ch/2,mx=fw*.07,my=mx*R,
+  const s=tilt?1.16:1,fw=Math.min(cw*.93,ch*.95*R*.86)*s,fh=fw/R/.86,cx=bx+cw/2,cy=by+ch/2,mx=fw*.07,my=mx*R,
    fr=[[cx-fw/2,cy-fh/2],[cx+fw/2,cy-fh/2],[cx+fw/2,cy+fh/2],[cx-fw/2,cy+fh/2]],ph=[[cx-fw/2+mx,cy-fh/2+my],[cx+fw/2-mx,cy-fh/2+my],[cx+fw/2-mx,cy+fh/2-my*3.4],[cx-fw/2+mx,cy+fh/2-my*3.4]];
   const a=tilt?ANG[i%ANG.length]*Math.PI/180:0,rot=p=>{const X=(p[0]-cx)*R,Y=p[1]-cy;return[cx+(X*Math.cos(a)-Y*Math.sin(a))/R,cy+X*Math.sin(a)+Y*Math.cos(a)]};
   out.push({pts:ph.map(rot),frame:fr.map(rot)})}return out}
-function famVariants(fam,n){const bc=bestCols(n),v=[],add=(name,cells,extra={})=>{if(cells&&cells.length===n)v.push({name,cells,...extra})};
+function famVariants(fam,n){const bc=bestCols(n),v=[],add=(name,cells)=>{if(cells&&cells.length===n)v.push({name,cells})};
  if(fam==='grid'){add('グリッド',gridBoxes(n,bc).map(rectPts));[2,3,4,5].filter(c=>c!==bc&&gridAllowed(n,c)).slice(0,2).forEach(c=>add(c+'列',gridBoxes(n,c).map(rectPts)));if(n<=5&&bc!==n)add('たて分割',gridBoxes(n,n).map(rectPts))}
  if(fam==='hero'&&n>=3){const per=(n-1)<=4?n-1:Math.ceil((n-1)/2);add('上に大きく',heroCells(n,.55,per));add('左に大きく',heroSideCells(n));add('まんなか',centerCols(n,.25));if(n>=4)add('上下でまんなか',centerRows(n,.5));add('余白ミニマル',minimalCells(n));if(n>=4&&n<=9)add('ミックス',mixCells(n))}
  if(fam==='hero'&&n===2){add('左に大きく',[rectPts({x:0,y:0,w:.64,h:1}),rectPts({x:.64,y:0,w:.36,h:1})].map((c,i)=>({...c,big:i===0})));add('余白ミニマル',minimalCells(2))}
  if(fam==='film'){if(n<=6)add('フィルム',gridBoxes(n,1).map(rectPts));if(n<=6)add('プリクラ風',purikuraCells(n));if(n>6)add('フィルム',gridBoxes(n,2).map(rectPts))}
- if(fam==='pola'&&n<=12){add('ポラロイド',polaroidCells(n,false),{noEdit:true});add('写真ダンプ',polaroidCells(n,true),{noEdit:true})}
- if(fam==='cut'&&n<=11){add('丸',cutCells(n,circlePts,circlePts),{noEdit:true});add('ハート',cutCells(n,heartPts,circlePts),{noEdit:true});add('角丸',cutCells(n,(cx,cy,r)=>roundRectPts(cx-r*1.25,cy-r,r*2.5,r*2,r*.3),(cx,cy,r)=>roundRectPts(cx-r,cy-r,r*2,r*2,r*.3)),{noEdit:true})}
+ if(fam==='pola'&&n<=12){add('ポラロイド',polaroidCells(n,false));add('写真ダンプ',polaroidCells(n,true))}
+ if(fam==='cut'&&n<=11){add('丸',cutCells(n,circlePts,circlePts));add('ハート',cutCells(n,heartPts,circlePts));add('角丸',cutCells(n,(cx,cy,r)=>roundRectPts(cx-r*1.25,cy-r,r*2.5,r*2,r*.3),(cx,cy,r)=>roundRectPts(cx-r,cy-r,r*2,r*2,r*.3)))}
  if(fam==='slant'){if(n>=3){const per=(n-1)<=4?n-1:Math.ceil((n-1)/2);add('ななめ',withBig(tiltCells(heroCells(n,.55,per).map(toBoxU),.08)))}else add('ななめ',tiltCells(gridBoxes(2,2),.12));if(n>=4)add('ななめグリッド',tiltCells(gridBoxes(n,bc),.06))}
  if(fam==='play'){if(n===2){add('いなずま',zigVars()[0]);add('なみなみ',zigVars()[2])}if(n===3){add('さんかく',triVars(3)[0]);add('Y字',triVars(3)[1])}if(n===4){add('バツ',xVars()[0]);add('風車',xVars()[1])}if(n===5){add('ひし形',diaVars()[0]);add('フレーム',diaVars()[1])}if(n>=3&&n<=8){const cv=chevVars(n);add('ジグザグ',cv[cv.length-1]);add('山型',cv[0])}}
  const seen=new Set();return v.filter(x=>{const s=geoSig(x.cells);if(seen.has(s))return false;seen.add(s);return true})}
 const variantsBeforeFam=variants;variants=function(k,n){if(k.startsWith('g:')){const ck=k+':'+n+':'+S.shape;if(LY.cache.has(ck))return LY.cache.get(ck);const out=famVariants(k.slice(2),n);LY.cache.set(ck,out);return out}return variantsBeforeFam(k,n)};
 layItems=function(n){return [...mineItems(n),...FAMS.filter(([f])=>famVariants(f,n).length).map(([f,label])=>({k:'g:'+f,label,big:f==='hero'||f==='cut'}))]};
+// マイ並べ方：白い枠（シール・ポラロイド）も一緒に保存・復元
+mineItems=function(n){const out=loadShapes().filter(s=>s.cells.length===n).reverse().map(s=>({k:'m:'+s.id,label:'マイ並べ方',mine:true,base:()=>s.cells.map(p=>Array.isArray(p)?{pts:p.map(q=>q.slice())}:{pts:p.pts.map(q=>q.slice()),...(p.frame?{frame:p.frame.map(q=>q.slice())}:{}),...(p.big?{big:true}:{})})}));
+ loadMine().filter(m=>m.rects.length===n).forEach(m=>out.push({k:'r:'+m.id,label:'マイ並べ方',mine:true,old:true,base:()=>m.rects.map(([x,y,w,h])=>rectPts({x,y,w,h}))}));return out};
 // 系統ごとに最後に選んだデザインを覚えておく
-chooseItem=function(it){if(it.k==='grid'){const vs=variants('grid',S.n),c=gridAllowed(S.n,S.cols)?S.cols:bestCols(S.n);S.lay={k:'grid',v:Math.max(0,vs.findIndex(x=>x.c===c))}}else{const nv=variants(it.k,S.n).length;S.lay={k:it.k,v:Math.min((S.famV||{})[it.k]||0,Math.max(0,nv-1))}}S.auto=false;S.mesh=null};
+chooseItem=function(it){if(it.k==='grid'){const vs=variants('grid',S.n),c=gridAllowed(S.n,S.cols)?S.cols:bestCols(S.n);S.lay={k:'grid',v:Math.max(0,vs.findIndex(x=>x.c===c))}}else{const nv=variants(it.k,S.n).length;S.lay={k:it.k,v:Math.min((S.famV||{})[it.k]||0,Math.max(0,nv-1))}}S.auto=false;S.mesh=null;S.free=null};
 tapItem=function(it){if(busyEditing())return;const cur=layNow(),vs=variants(it.k,S.n);
- if(S.auto===false&&cur.k===it.k){if(cur.nv<2){toast((vs[cur.v]&&vs[cur.v].name)||it.label);return}const v=(cur.v+1)%cur.nv;S.lay={k:it.k,v};S.famV={...(S.famV||{}),[it.k]:v};S.mesh=null;commit();toast(((vs[v]&&vs[v].name)||it.label)+'　'+(v+1)+' / '+cur.nv);return}
+ if(S.auto===false&&cur.k===it.k){if(cur.nv<2){toast((vs[cur.v]&&vs[cur.v].name)||it.label);return}const v=(cur.v+1)%cur.nv;S.lay={k:it.k,v};S.famV={...(S.famV||{}),[it.k]:v};S.mesh=null;S.free=null;commit();toast(((vs[v]&&vs[v].name)||it.label)+'　'+(v+1)+' / '+cur.nv);return}
  chooseItem(it);commit();const now=layNow();toast(((vs[now.v]&&vs[now.v].name)||it.label)+(now.nv>1?'　タップで別のデザイン':''))};
-const longItemBeforeFam=longItem;longItem=function(it){if(!it.mine&&it.k.startsWith('g:')){const cur=layNow();if(!(S.auto===false&&cur.k===it.k)){chooseItem(it);commit()}const vs=variants(it.k,S.n),now=layNow();if(vs[now.v]&&vs[now.v].noEdit){toast('この配置は形の編集ができません');return}if(busyEditing())return;layEdit(true);return}return longItemBeforeFam(it)};
-// 画面と保存に白い枠（ポラロイド）を描く
+const longItemBeforeFam=longItem;longItem=function(it){if(!it.mine&&it.k.startsWith('g:')){if(busyEditing())return;const cur=layNow();if(!(S.auto===false&&cur.k===it.k)){chooseItem(it);commit()}layEdit(true);return}return longItemBeforeFam(it)};
+// 画面と保存に白い枠（ポラロイド・シール）を描く
 const layCellsBeforeFam=layCells;layCells=function(){const raw=layNow().cells;return layCellsBeforeFam().map((c,i)=>raw[i]&&raw[i].frame?{...c,frame:raw[i].frame}:c)};
 const layGeomsBeforeFam=layGeoms;layGeoms=function(W,H,gap){const cells=layCells(),G=layGeomsBeforeFam(W,H,gap),g=S.blend?0:gap,iw=W-2*g,ih=H-2*g;return G.map((x,i)=>cells[i]&&cells[i].frame?{...x,frame:cells[i].frame.map(([u,v])=>[g+u*iw,g+v*ih])}:x)};
 function drawFrame(ctx,pts,k){ctx.save();ctx.shadowColor='#0000002e';ctx.shadowBlur=8*k;ctx.shadowOffsetY=2*k;ctx.fillStyle='#fff';ctx.beginPath();pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();ctx.restore()}
-const fxCellBeforeFam=fxCell;let frameScale=1;fxCell=function(im,p,G,F,R){return fxCellBeforeFam(im,p,G,F,R)};
-// layPaint と output で、各写真の前に枠を描く
 layPaint=async function(G0){const tk=++fxToken;board.classList.add('fx');board.classList.toggle('fxd',G0.some(g=>g.diag));if(fxCanvas.parentNode!==board)board.prepend(fxCanvas);const W0=parseFloat(board.style.width)||board.offsetWidth,H0=parseFloat(board.style.height)||board.offsetHeight,dpr=Math.min(2,window.devicePixelRatio||1),W=Math.round(W0*dpr),H=Math.round(H0*dpr),G=layGeoms(W,H,S.gap*Math.max(W,H)/1600),F=S.blend?featherPx(W,H):0,R=radiusPx(W,H);const ims=await Promise.all(S.slots.map(p=>p?fxImg(p.src).catch(()=>null):null));if(tk!==fxToken)return;const t=document.createElement('canvas');t.width=W;t.height=H;const x=t.getContext('2d');G.forEach((g,i)=>{if(g.frame)drawFrame(x,g.frame,dpr);const p=S.slots[i];if(p&&ims[i]){const r=fxCell(ims[i],p,g,F,R);x.drawImage(r.c,r.x0,r.y0)}else{x.save();polyPath(x,g.hit,R);x.fillStyle=g.frame?'#f3edf0':'#ffffff8c';x.fill();x.setLineDash([4*dpr,4*dpr]);x.lineWidth=dpr;x.strokeStyle='#cdbbc5';x.stroke();x.restore()}});fxCanvas.width=W;fxCanvas.height=H;fxCanvas.getContext('2d').drawImage(t,0,0)};
 output=async function(){const d=dimensions(outEdge()),c=document.createElement('canvas');c.width=d.W;c.height=d.H;const ctx=c.getContext('2d');ctx.fillStyle=S.bg;ctx.fillRect(0,0,c.width,c.height);if(S.bgImg)await drawBgImg(ctx,c.width,c.height);normalizeLayout();const G=layGeoms(d.W,d.H,d.gap),F=S.blend?featherPx(d.W,d.H):0,R=radiusPx(d.W,d.H),k=Math.max(d.W,d.H)/500;for(let i=0;i<S.n;i++){if(!G[i])continue;if(G[i].frame)drawFrame(ctx,G[i].frame,k);const p=S.slots[i];if(!p)continue;const r=fxCell(await getImage(p),p,G[i],F,R);ctx.drawImage(r.c,r.x0,r.y0);drawLabel(ctx,p,labelRect(G[i]),outEdge());await breathe()}return encode(c,'image/jpeg',.94)};
-// 見本の図：枠も描く・選んでいる系統は点（●○○）で何番目か表示
+// 見本の図：枠も描く・何番目かを点（●○○）で表示
 const thumbOfBeforeFam=thumbOf;thumbOf=function(cells,bigIdx=-1){let s=thumbOfBeforeFam(cells,bigIdx);if(cells.some(c=>c.frame)){const r=boardRatio(),T0=46,w=r>=1?T0:T0*r,h=r>=1?T0/r:T0,g=1.6;const fr=cells.filter(c=>c.frame).map(c=>'<polygon class="pf" points="'+c.frame.map(([x,y])=>(g+x*(w-2*g)).toFixed(2)+','+(g+y*(h-2*g)).toFixed(2)).join(' ')+'"/>').join('');s=s.replace(/(<svg[^>]*>)/,'$1'+fr)}return s};
 const renderLCBeforeFam=renderLayoutControls;renderLayoutControls=function(){renderLCBeforeFam();const strip=$('#layoutStrip');if(!strip)return;const cur=layNow();strip.querySelectorAll('button[data-k]').forEach(b=>{b.querySelector('.lyCount')?.remove();b.querySelector('.lyDots')?.remove();const k=b.dataset.k,nv=variants(k,S.n).length;if(nv<2||LY.editing)return;const on=S.auto===false&&cur.k===k,vi=on?cur.v:Math.min((S.famV||{})[k]||0,nv-1);const d=document.createElement('i');d.className='lyDots';d.setAttribute('aria-hidden','true');d.innerHTML=Array.from({length:nv},(_,i)=>'<b class="'+(i===vi?'on':'')+'"></b>').join('');b.append(d)})};
-// 古い見本（f:）を選んでいた下書きは、近い系統に移す
 (()=>{const map={grid:'grid',row:'grid',gridAlt:'grid',heroT:'hero',heroL:'hero',center:'hero',centerR:'hero',mix:'hero',film:'film',stagger:'grid',slant:'slant',tri:'play',x:'play',dia:'play',frame:'play',chev:'play',zig:'play'};if(S.lay&&S.lay.k&&S.lay.k.startsWith('f:')){S.lay={k:'g:'+(map[S.lay.k.slice(2)]||'grid'),v:0}}})();
+
+/* ===== 丸・ハート・ポラロイドの「自由配置」編集：ドラッグで移動、○か2本指で大きさを変える ===== */
+const isFreeCells=cells=>cells.some(c=>c.frame||c.pts.length>8);
+const freeId=n=>Array.from({length:n},()=>({dx:0,dy:0,s:1}));
+function applyFree(cells,t){return cells.map((c,i)=>{const T=t[i];if(!T)return c;const [cx,cy]=polyCentroid(c.pts),f=([x,y])=>[cx+(x-cx)*T.s+T.dx,cy+(y-cy)*T.s+T.dy];return{...c,pts:c.pts.map(f),...(c.frame?{frame:c.frame.map(f)}:{})}})}
+const layNowBase=layNow;layNow=function(){const r=layNowBase();if(S.free&&S.free.key===r.id&&!r.edited){r.base=r.cells;r.cells=applyFree(r.cells,S.free.t)}return r};
+const freeChanged=()=>!!(S.free&&S.free.t.some(T=>T.dx||T.dy||T.s!==1));
+const layEditBase=layEdit;layEdit=function(on){if(on&&isFreeCells(layNowBase().cells))return freeEdit();return layEditBase(on)};
+function freeEdit(){const cur=layNowBase();LY.before={lay:S.lay?JSON.parse(JSON.stringify(S.lay)):null,mesh:S.mesh,auto:S.auto,free:S.free};if(S.auto!==false){S.auto=false}if(!(S.free&&S.free.key===cur.id))S.free={key:cur.id,t:freeId(S.n)};LY.editing=true;LY.free=true;LY.sel=0;LY.hist=[];LY.sig='';hintOnce('nazo-free-hint','写真をドラッグで移動、右下の○か2本指で大きさを変えられます');render()}
+function finishFree(quiet){const cur=layNow(),changed=freeChanged();LY.editing=false;LY.free=false;LY.sel=-1;LY.hist=[];LY.sig='';
+ if(changed){const r6=v=>+v.toFixed(4),cells=cur.cells.map(c=>({pts:c.pts.map(p=>p.map(r6)),...(c.frame?{frame:c.frame.map(p=>p.map(r6))}:{}),...(c.big?{big:true}:{})})),a=loadShapes();let id,over=false;
+  if(cur.k.startsWith('m:')){id=cur.k.slice(2);const s=a.find(x=>x.id===id);if(s){s.cells=cells;over=true}else a.push({id,cells})}else{id=Date.now().toString(36);a.push({id,cells})}
+  saveShapes(a);S.lay={k:'m:'+id,v:0};S.free=null;commit();if(!quiet)toast(over?'マイ並べ方を上書きしました':'マイ並べ方（★）に保存しました')}else{S.free=null;render()}}
+const finishEditBase=finishEdit;finishEdit=function(q){if(LY.free)return finishFree(q);return finishEditBase(q)};
+const TIP0=()=>$('#lyBar .lyTip');let tipText=null;
+const layHandlesBase=layHandles;layHandles=function(){const free=LY.editing&&LY.free&&!loading;lyLayer.classList.toggle('free',free);$('#lyFlip').hidden=free;const tip=TIP0();if(tip){if(tipText===null)tipText=tip.textContent;tip.textContent=free?'ドラッグで移動・右下の○か2本指で大きさ・真ん中にそろうと青い線':tipText}
+ if(!free){lyLayer.querySelectorAll('.frSel,.frHandle').forEach(e=>e.remove());return layHandlesBase()}
+ lyBar.hidden=false;board.classList.add('shaping');$('#lyUndo').disabled=!LY.hist.length;$('#lyReset').disabled=!freeChanged();
+ if(lyLayer.parentNode!==board)board.append(lyLayer);lyLayer.querySelectorAll('.dgHandle').forEach(e=>e.remove());
+ const W=parseFloat(board.style.width),H=parseFloat(board.style.height),G=layGeoms(W,H,S.gap*Math.max(W,H)/1600);let svg=lyLayer.querySelector('svg');if(!svg){svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','dgOutline');lyLayer.prepend(svg)}
+ const P=pts=>pts.map(([x,y])=>x.toFixed(1)+','+y.toFixed(1)).join(' '),fg=LY.fg||{};let guide='';if(fg.x)guide+='<line class="guide" y1="0" y2="'+H+'" x1="'+W/2+'" x2="'+W/2+'"/>';if(fg.y)guide+='<line class="guide" x1="0" x2="'+W+'" y1="'+H/2+'" y2="'+H/2+'"/>';
+ svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.innerHTML=G.map((g,i)=>'<polygon class="'+(i===LY.sel?'sel':'other')+'" points="'+P(g.frame||g.hit)+'"/>').join('')+guide;
+ let h=lyLayer.querySelector('.frHandle');const g=G[LY.sel];if(!g){h&&h.remove();return}if(!h){h=document.createElement('span');h.className='dgHandle frHandle';h.setAttribute('aria-label','大きさを変える');lyLayer.append(h)}const pts=g.frame||g.hit,xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);h.style.left=Math.max(...xs)+'px';h.style.top=Math.max(...ys)+'px'};
+// 指の操作
+(()=>{const ptr=new Map();let D=null;const pip=(x,y,pts)=>{let c=false;for(let i=0,j=pts.length-1;i<pts.length;j=i++){const [xi,yi]=pts[i],[xj,yj]=pts[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)c=!c}return c};
+ const local=e=>{const r=board.getBoundingClientRect(),W=parseFloat(board.style.width),sc=r.width/W;return[(e.clientX-r.left)/sc,(e.clientY-r.top)/sc]};
+ const ctx=()=>{const W=parseFloat(board.style.width),H=parseFloat(board.style.height),gap=S.gap*Math.max(W,H)/1600,g=S.blend?0:gap;return{W,H,G:layGeoms(W,H,gap),iw:W-2*g,ih:H-2*g,g}};
+ const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}};
+ function begin(){const c=ctx(),T=S.free.t[LY.sel],base=layNowBase().cells[LY.sel],[bcx,bcy]=polyCentroid(base.pts),cen=[c.g+(bcx+T.dx)*c.iw,c.g+(bcy+T.dy)*c.ih];const a=[...ptr.values()];
+  D={i:LY.sel,c,T0:{...T},bc:[bcx,bcy],cen,mode:D&&D.mode==='scale1'?'scale1':(a.length>=2?'pinch':D?D.mode:'move'),p0:a.map(p=>p.slice()),moved:D?D.moved:false}}
+ lyLayer.addEventListener('pointerdown',e=>{if(!(LY.editing&&LY.free)||loading)return;e.preventDefault();lyLayer.setPointerCapture(e.pointerId);const p=local(e);ptr.set(e.pointerId,p);
+  if(ptr.size===1){const onHandle=e.target.classList&&e.target.classList.contains('frHandle');if(!onHandle){const {G}=ctx();let hit=-1;for(let i=G.length-1;i>=0;i--){if(pip(p[0],p[1],G[i].frame||G[i].hit)){hit=i;break}}if(hit<0){LY.sel=-1;layHandles();D=null;return}LY.sel=hit}
+   LY.hist.push(S.free);if(LY.hist.length>40)LY.hist.shift();S.free={key:S.free.key,t:S.free.t.map(o=>({...o}))};D={mode:onHandle?'scale1':'move',moved:false};begin();layHandles()}
+  else if(ptr.size===2&&D){D.mode='pinch';begin()}});
+ lyLayer.addEventListener('pointermove',e=>{if(!D||!ptr.has(e.pointerId))return;ptr.set(e.pointerId,local(e));const a=[...ptr.values()],T=S.free.t[D.i],c=D.c;LY.fg={};
+  if(D.mode==='move'&&a.length===1){let dx=D.T0.dx+(a[0][0]-D.p0[0][0])/c.iw,dy=D.T0.dy+(a[0][1]-D.p0[0][1])/c.ih;const tx=6/c.iw,ty=6/c.ih;if(Math.abs(D.bc[0]+dx-.5)<tx){dx=.5-D.bc[0];LY.fg.x=1}if(Math.abs(D.bc[1]+dy-.5)<ty){dy=.5-D.bc[1];LY.fg.y=1}if((LY.fg.x||LY.fg.y)&&!D.snap)buzz();D.snap=LY.fg.x||LY.fg.y;T.dx=dx;T.dy=dy}
+  else if(D.mode==='scale1'){const d0=Math.hypot(D.p0[0][0]-D.cen[0],D.p0[0][1]-D.cen[1])||1,d=Math.hypot(a[0][0]-D.cen[0],a[0][1]-D.cen[1]);T.s=Math.max(.3,Math.min(3,D.T0.s*d/d0))}
+  else if(D.mode==='pinch'&&a.length>=2&&D.p0.length>=2){const d0=Math.hypot(D.p0[0][0]-D.p0[1][0],D.p0[0][1]-D.p0[1][1])||1,d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);T.s=Math.max(.3,Math.min(3,D.T0.s*d/d0));const m0=[(D.p0[0][0]+D.p0[1][0])/2,(D.p0[0][1]+D.p0[1][1])/2],m=[(a[0][0]+a[1][0])/2,(a[0][1]+a[1][1])/2];T.dx=D.T0.dx+(m[0]-m0[0])/c.iw;T.dy=D.T0.dy+(m[1]-m0[1])/c.ih}
+  D.moved=true;sizeBoard()});
+ const end=e=>{if(!ptr.has(e.pointerId))return;ptr.delete(e.pointerId);if(ptr.size===1&&D){D.mode='move';begin();return}if(ptr.size)return;const moved=D&&D.moved;D=null;LY.fg={};if(moved)commit();else{LY.hist.pop();layHandles()}};
+ lyLayer.addEventListener('pointerup',end);lyLayer.addEventListener('pointercancel',end)})();
+// 編集画面のボタンを自由配置にも対応
+(()=>{const u=$('#lyUndo').onclick,r=$('#lyReset').onclick,c=$('#lyCancel').onclick,dn=$('#lyDone').onclick;
+ $('#lyUndo').onclick=()=>{if(!LY.free)return u();if(!LY.hist.length)return;S.free=LY.hist.pop();commit()};
+ $('#lyReset').onclick=()=>{if(!LY.free)return r();if(!freeChanged())return;LY.hist.push(S.free);S.free={key:S.free.key,t:freeId(S.n)};commit();toast('最初の配置に戻しました（「1つ戻す」で取り消せます）')};
+ $('#lyCancel').onclick=()=>{if(!LY.free)return c();const b=LY.before;if(b){S.lay=b.lay;S.mesh=b.mesh;S.auto=b.auto;S.free=b.free}LY.editing=false;LY.free=false;LY.sel=-1;LY.hist=[];LY.before=null;commit();toast('変更をキャンセルしました')};
+ $('#lyDone').onclick=()=>{if(!LY.free)return dn();finishFree(false)}})();
+const cellClickBeforeFree=cellClick;cellClick=function(i){if(LY.editing&&LY.free)return;return cellClickBeforeFree(i)};
+
 /* ===== 縦長ボタン：タップで縦長、長押しで 4:5 と 9:16（ストーリー）を切り替え ===== */
 SHAPES.push('0.5625');
 (()=>{const b=document.querySelector('#shapeSeg [data-shape="0.8"]');if(!b)return;b.id='tallBtn';let pref=(()=>{try{return localStorage.getItem('nazo-collage-tall')==='0.5625'?'0.5625':'0.8'}catch(_){return '0.8'}})();
@@ -700,5 +755,43 @@ SHAPES.push('0.5625');
  const r0=render;render=function(){sync();r0()};sync()})();
 /* ===== 「まとめて選ぶ」：写真がないときは中央に大きく、あるときは右下の丸い＋ボタンに ===== */
 (()=>{const r0=render;render=function(){r0();const has=S.slots.some(Boolean),add=$('#add');ws.classList.toggle('noPhotos',!has);if(has&&!loading){add.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';add.setAttribute('aria-label','写真をまとめて追加');add.title='写真をまとめて追加'}else{add.removeAttribute('aria-label')}}})();
+LY.cache.clear();{const st=$('#layoutStrip');if(st)st.dataset.sig='';render()}
+
+/* ===== モチーフ：複数の写真で1つのかわいい形を作る（クローバー・花・ハート・星）と、切り抜きの形を追加 ===== */
+const rotPt=([x,y],a)=>[x*Math.cos(a)-y*Math.sin(a),x*Math.sin(a)+y*Math.cos(a)];
+// ハートの葉：先っぽ（とがった所）を中心(cx,cy)に向けて、角度aの方向に置く
+function heartLeaf(cx,cy,r,a){const tip=15/17*r,th=a+Math.PI/2;return heartPts(0,0,r,48).map(p=>{const q=rotPt([p[0],p[1]-tip],th);return[cx+q[0],cy+q[1]]})}
+function cloverCells(leaves,withCenter){const R=boardRatio(),m=Math.min(R,1),cx=R/2,cy=.47,r=m*(leaves===3?.27:.24),angs=leaves===3?[-90,30,150]:[-135,-45,45,135],out=angs.map(d=>sticker(phys(heartLeaf(cx,cy,r,d*Math.PI/180)),r));
+ if(withCenter){const rc=r*.42;out.push({...sticker(phys(circlePts(cx,cy,rc)),rc),big:true})}else out[0].big=true;return out}
+function flowerCells(n){const R=boardRatio(),m=Math.min(R,1),cx=R/2,cy=.5,p=n-1,rc=m*.17,D=m*.3,rp=Math.min(m*.17,D*Math.sin(Math.PI/p)*1.12),out=[];
+ for(let i=0;i<p;i++){const a=-Math.PI/2+i*2*Math.PI/p;out.push(sticker(phys(circlePts(cx+D*Math.cos(a),cy+D*Math.sin(a),rp)),rp))}out.push({...sticker(phys(circlePts(cx,cy,rc)),rc),big:true});return out}
+// 多角形を半平面 a*x+b*y<=c で切る
+function clipHalf(poly,a,b,c){const out=[],n=poly.length,inside=p=>a*p[0]+b*p[1]<=c+1e-12;for(let i=0;i<n;i++){const P=poly[i],Q=poly[(i+1)%n],pi=inside(P),qi=inside(Q);if(pi)out.push(P);if(pi!==qi){const t=(c-a*P[0]-b*P[1])/(a*(Q[0]-P[0])+b*(Q[1]-P[1]));out.push([P[0]+t*(Q[0]-P[0]),P[1]+t*(Q[1]-P[1])])}}return out}
+function heartSplit(n){const R=boardRatio(),m=Math.min(R,1),cx=R/2,r=m*.5,cy=.5,H=heartPts(cx,cy,r,96),ym=cy-.05*r,pieces=[];
+ const cut=(...hs)=>hs.reduce((p,[a,b,c])=>clipHalf(p,a,b,c),H);
+ if(n===2)pieces.push(cut([1,0,cx]),cut([-1,0,-cx]));
+ if(n===3)pieces.push(cut([1,0,cx],[0,1,ym]),cut([-1,0,-cx],[0,1,ym]),cut([0,-1,-ym]));
+ if(n===4)pieces.push(cut([1,0,cx],[0,1,ym]),cut([-1,0,-cx],[0,1,ym]),cut([1,0,cx],[0,-1,-ym]),cut([-1,0,-cx],[0,-1,-ym]));
+ return pieces.filter(p=>p.length>=3).map(p=>({pts:phys(p)}))}
+function starPts(cx,cy,r,inner=.47){return Array.from({length:10},(_,i)=>{const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*inner:r;return[cx+rr*Math.cos(a),cy+rr*Math.sin(a)]})}
+function starSplit(n){const R=boardRatio(),m=Math.min(R,1),cx=R/2,cy=.53,s=starPts(cx,cy,m*.5),O=i=>s[(2*i)%10],I=i=>s[(2*i+1)%10],out=[];
+ if(n===5)for(let i=0;i<5;i++)out.push({pts:phys([[cx,cy],I((i+4)%5),O(i),I(i)])});
+ if(n===6){for(let i=0;i<5;i++)out.push({pts:phys([I((i+4)%5),O(i),I(i)])});out.push({pts:phys([0,1,2,3,4].map(I)),big:true})}
+ return out}
+function cloudPts(cx,cy,r,k=72){return Array.from({length:k},(_,i)=>{const t=i/k*Math.PI*2,b=1+.11*Math.abs(Math.sin(3.5*t));return[cx+r*1.25*b*Math.cos(t),cy+r*.82*b*Math.sin(t)]})}
+function flowerShape(cx,cy,r,k=80){return Array.from({length:k},(_,i)=>{const t=i/k*Math.PI*2,rr=r*(.72+.28*Math.abs(Math.cos(2.5*t)));return[cx+rr*Math.sin(t),cy-rr*Math.cos(t)]})}
+const famVariantsBeforeMotif=famVariants;famVariants=function(fam,n){
+ if(fam==='motif'){const v=[],add=(name,cells)=>{if(cells&&cells.length===n)v.push({name,cells})};
+  if(n===2)add('ハート',heartSplit(2));
+  if(n===3){add('三つ葉',cloverCells(3,false));add('ハート',heartSplit(3))}
+  if(n===4){add('四つ葉',cloverCells(4,false));add('三つ葉＋まんなか',cloverCells(3,true));add('ハート',heartSplit(4))}
+  if(n===5){add('四つ葉＋まんなか',cloverCells(4,true));add('お花',flowerCells(5));add('星',starSplit(5))}
+  if(n===6){add('お花',flowerCells(6));add('星',starSplit(6))}
+  if(n>=7&&n<=9)add('お花',flowerCells(n));
+  return v}
+ const v=famVariantsBeforeMotif(fam,n);
+ if(fam==='cut'&&n<=11){const add=(name,cells)=>{if(cells&&cells.length===n)v.push({name,cells})};add('星',cutCells(n,(cx,cy,r)=>starPts(cx,cy+r*.06,r*1.08),circlePts));add('お花',cutCells(n,flowerShape,flowerShape));add('雲',cutCells(n,(cx,cy,r)=>cloudPts(cx,cy,r*.82),circlePts))}
+ return v};
+FAMS.splice(FAMS.findIndex(f=>f[0]==='cut')+1,0,['motif','モチーフ']);
 LY.cache.clear();{const st=$('#layoutStrip');if(st)st.dataset.sig='';render()}
 </script></body></html>
